@@ -1,17 +1,18 @@
+// /frontend/app/index.tsx
+
 import React from "react";
-import { NavigationContainer } from "@react-navigation/native";
 import { View, StyleSheet } from "react-native";
 import IngredientsList from "../components/IngredientsList";
 import BottomNavigation from "../components/BottomNav";
+import Header from "../components/Header"; // Import Header component
 
 export default function Index() {
   return (
-    <NavigationContainer>
-      <View style={styles.container}>
-        <IngredientsList />
-        <BottomNavigation />
-      </View>
-    </NavigationContainer>
+    <View style={styles.container}>
+      <Header /> 
+      <IngredientsList />
+      <BottomNavigation />
+    </View>
   );
 }
 

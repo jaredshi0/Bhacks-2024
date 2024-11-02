@@ -3,12 +3,16 @@ import { View, Text, StyleSheet, TextInput, ScrollView, Pressable } from "react-
 import IngredientItem from "./IngredientItem";
 import { addIngredientToList } from "../constants/ingrUtil";
 import { Entypo } from "@expo/vector-icons";
+import { LinearGradient } from "expo-linear-gradient"; // Import LinearGradient
 
 export default function IngredientsList() {
   const [ingredients, setIngredients] = useState([
     { name: "Steak", amount: "1.0 lbs", expires: "Expires 10/2" },
     { name: "Eggs", amount: "12", expires: "Expires 10/2" },
+    { name: "Milk", amount: "1 liter", expires: "Expires 10/5" },
   ]);
+
+  const [searchQuery, setSearchQuery] = useState("");
 
   const addIngredient = () => {
     const newIngredient = addIngredientToList("New Ingredient", "1 unit", "Expires 10/5");
@@ -19,28 +23,46 @@ export default function IngredientsList() {
     setIngredients(ingredients.filter((_, i) => i !== index));
   };
 
+  const updateIngredient = (index: number, updatedItem: { name: string; amount: string; expires: string }) => {
+    const updatedIngredients = ingredients.map((item, i) => (i === index ? updatedItem : item));
+    setIngredients(updatedIngredients);
+  };
+
+  const filteredIngredients = ingredients.filter((ingredient) =>
+    ingredient.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   return (
     <View>
-      <View style={styles.header}>
-        <Text style={styles.headerText}>Your Ingredients</Text>
-      </View>
-      <TextInput style={styles.searchBar} placeholder="e.g. Eggs, Milk, Chicken" />
+      <TextInput
+        style={styles.searchBar}
+        placeholder="Search for an Ingredient"
+        value={searchQuery}
+        onChangeText={setSearchQuery}
+      />
 
-      {/* Adding ingredientsList style to ScrollView */}
       <ScrollView style={styles.ingredientsList}>
-        {ingredients.map((item, index) => (
+        {filteredIngredients.map((item, index) => (
           <IngredientItem
             key={index}
             item={item}
             onDelete={() => deleteIngredient(index)}
+            onUpdate={(updatedItem) => updateIngredient(index, updatedItem)}
           />
         ))}
       </ScrollView>
 
       <View style={styles.bottomButtons}>
-        <Pressable style={styles.addButton} onPress={addIngredient}>
-          <Text style={styles.addButtonText}>Click to add an Ingredient</Text>
-        </Pressable>
+        <LinearGradient
+          colors={["#2E7D32", "#A5D6A7"]}
+          style={styles.gradientButton}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+        >
+          <Pressable style={styles.pressable} onPress={addIngredient}>
+            <Text style={styles.addButtonText}>Click to add an Ingredient</Text>
+          </Pressable>
+        </LinearGradient>
         <Entypo name="camera" size={24} color="black" style={styles.cameraIcon} />
       </View>
     </View>
@@ -48,17 +70,6 @@ export default function IngredientsList() {
 }
 
 const styles = StyleSheet.create({
-  header: {
-    height: 100,
-    backgroundColor: "#5db075",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  headerText: {
-    fontSize: 32,
-    fontWeight: "bold",
-    color: "#000",
-  },
   searchBar: {
     height: 40,
     margin: 12,
@@ -78,13 +89,19 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 10,
   },
-  addButton: {
+  gradientButton: {
     flex: 1,
-    backgroundColor: "#5db075",
-    padding: 10,
     borderRadius: 10,
-    alignItems: "center",
     marginRight: 10,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 10,
+  },
+  pressable: {
+    alignItems: "center",
+    justifyContent: "center",
+    width: "100%",
+    borderRadius: 10,
   },
   addButtonText: {
     color: "#FFF",
