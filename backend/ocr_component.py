@@ -92,3 +92,7 @@ def crop_image(img):
     # Crop out by extreme points
     cropped_image = img[uppermost_y:lowermost_y, leftmost_x:rightmost_x]
     return cropped_image
+
+if __name__ == "__main__":
+    file = "backend/images/good_test_2.jpg"
+    print(OCR(file))
