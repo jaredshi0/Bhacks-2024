@@ -7,7 +7,7 @@ from pydantic import BaseModel
 # Data model for LLM to generate
 class Ingredient(BaseModel):
     name: str
-    quantity: int
+    quantity: float
     quantity_unit: Optional[str]
 
 class Recipe(BaseModel):
