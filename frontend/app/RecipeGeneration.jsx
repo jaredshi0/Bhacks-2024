@@ -5,8 +5,9 @@ import {Link} from 'expo-router'
 import {
   SourceSerifPro_400Regular,
 } from '@expo-google-fonts/source-serif-pro'
+import axios from "axios";
 
-
+const userIP = "10.239.57.74"
 export default function RecipeGeneration() {
 
   	let [fontsLoaded] = useFonts({
@@ -16,6 +17,8 @@ export default function RecipeGeneration() {
 
 	});
   
+  axios.get(userIP)
+
   
   const testList = [{recipe_Name:'bacon egg and cheese', ingredients: "testing ingredients \ningredients 1 \ningredients 2 \ningredients 3", directions: ["dir test 1", "dir test 2"]},
   {recipe_Name:'isaac  sucks', ingredients:'isaac sucks', directions: ['isaac sucks','issac sucks']},
