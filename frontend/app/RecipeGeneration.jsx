@@ -17,8 +17,6 @@ export default function RecipeGeneration() {
 
 	});
   
-  axios.get(userIP)
-
   
   const testList = [{recipe_Name:'bacon egg and cheese', ingredients: "testing ingredients \ningredients 1 \ningredients 2 \ningredients 3", directions: ["dir test 1", "dir test 2"]},
   {recipe_Name:'isaac  sucks', ingredients:'isaac sucks', directions: ['isaac sucks','issac sucks']},
