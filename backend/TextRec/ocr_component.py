@@ -8,10 +8,7 @@ from pytesseract import Output
 
 pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
 
-def OCR(file_path):
-
-    # Read in file and resize
-    image = cv2.imread(file_path)
+def OCR(image):
     original = image.copy()
     resize_ratio = 500 / image.shape[0]
     width = int(image.shape[1] * resize_ratio)
