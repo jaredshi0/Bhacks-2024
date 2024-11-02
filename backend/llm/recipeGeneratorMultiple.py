@@ -2,8 +2,6 @@ from backend.config import GROQ_API_KEY
 from groq import Groq
 from typing import List, Optional
 import json
-import asyncio
-
 from pydantic import BaseModel
 
 # Data model for LLM to generate
@@ -17,12 +15,12 @@ class Recipe(BaseModel):
     ingredients: List[Ingredient]
     directions: List[str]
 
+client = Groq(api_key=GROQ_API_KEY)
+
 def generate_recipe_groq(ingredients) -> Recipe:
     # Convert ingredients list to string for prompt
     ingredients_list = [ingredient['name'] for ingredient in ingredients]
     ingredients_toString = ", ".join(ingredients_list)
-
-    client = Groq(api_key=GROQ_API_KEY)
 
     chat_completion = client.chat.completions.create(
         messages=[
