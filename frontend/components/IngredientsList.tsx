@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, StyleSheet, TextInput, ScrollView, Pressable, Image, Alert } from "react-native";
+import { View, Text, StyleSheet, TextInput, ScrollView, Pressable, Image } from "react-native";
 import IngredientItem from "./IngredientItem";
 import { addIngredientToList } from "../constants/ingrUtil";
 import { LinearGradient } from "expo-linear-gradient";
@@ -52,7 +52,9 @@ export default function IngredientsList() {
         ))}
       </ScrollView>
 
-      {capturedImage && <Image source={{ uri: capturedImage }} style={styles.capturedImage} />}
+      {capturedImage && (
+        <Image source={{ uri: capturedImage }} style={styles.capturedImage} />
+      )}
 
       <View style={styles.bottomButtons}>
         <LinearGradient
@@ -66,7 +68,6 @@ export default function IngredientsList() {
           </Pressable>
         </LinearGradient>
         
-        {/* Integrate CameraComponent here and pass onCapture function */}
         <CameraComponent onCapture={(uri) => setCapturedImage(uri)} />
       </View>
     </View>
