@@ -25,7 +25,7 @@ def OCR(image):
 
     edges = cv2.Canny(dilated, 30, 100, apertureSize=3)
 
-    contours, hierarchy = cv2.findContours(edges, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+    contours, _ = cv2.findContours(edges, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 
     largest_contours = sorted(contours, key = cv2.contourArea, reverse = True)[:5]
     receipt_contour = get_receipt_contour(largest_contours)
@@ -99,4 +99,5 @@ def contour_to_rect(contour, ratio):
     return rect / ratio
 
 if __name__ == "__main__":
-    print(OCR("backend/images/test_2.jpg"))
+    image = cv2.imread("backend/images/test_2.jpg")
+    print(OCR(image))
