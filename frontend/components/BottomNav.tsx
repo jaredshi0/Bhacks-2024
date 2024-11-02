@@ -16,7 +16,7 @@ const styles = StyleSheet.create({
   bottomNav: {
     flexDirection: "row",
     justifyContent: "space-around",
-    paddingVertical: 10,
+    paddingVertical: 20,
     backgroundColor: "#F5F5F5",
   },
 });

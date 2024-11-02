@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import { View, Text, StyleSheet, TextInput, ScrollView, Pressable } from "react-native";
+import { View, Text, StyleSheet, TextInput, ScrollView, Pressable, Image, Alert } from "react-native";
 import IngredientItem from "./IngredientItem";
 import { addIngredientToList } from "../constants/ingrUtil";
-import { Entypo } from "@expo/vector-icons";
-import { LinearGradient } from "expo-linear-gradient"; // Import LinearGradient
+import { LinearGradient } from "expo-linear-gradient";
+import CameraComponent from "./Camera";
 
 export default function IngredientsList() {
   const [ingredients, setIngredients] = useState([
@@ -11,16 +11,16 @@ export default function IngredientsList() {
     { name: "Eggs", amount: "12", expires: "Expires 10/2" },
     { name: "Milk", amount: "1 liter", expires: "Expires 10/5" },
   ]);
-
   const [searchQuery, setSearchQuery] = useState("");
+  const [capturedImage, setCapturedImage] = useState<string | null>(null);
 
   const addIngredient = () => {
     const newIngredient = addIngredientToList("New Ingredient", "1 unit", "Expires 10/5");
-    setIngredients([...ingredients, newIngredient]);
+    setIngredients((prevIngredients) => [...prevIngredients, newIngredient]);
   };
 
   const deleteIngredient = (index: number) => {
-    setIngredients(ingredients.filter((_, i) => i !== index));
+    setIngredients((prevIngredients) => prevIngredients.filter((_, i) => i !== index));
   };
 
   const updateIngredient = (index: number, updatedItem: { name: string; amount: string; expires: string }) => {
@@ -33,7 +33,7 @@ export default function IngredientsList() {
   );
 
   return (
-    <View>
+    <View style={styles.container}>
       <TextInput
         style={styles.searchBar}
         placeholder="Search for an Ingredient"
@@ -52,6 +52,8 @@ export default function IngredientsList() {
         ))}
       </ScrollView>
 
+      {capturedImage && <Image source={{ uri: capturedImage }} style={styles.capturedImage} />}
+
       <View style={styles.bottomButtons}>
         <LinearGradient
           colors={["#2E7D32", "#A5D6A7"]}
@@ -63,16 +65,22 @@ export default function IngredientsList() {
             <Text style={styles.addButtonText}>Click to add an Ingredient</Text>
           </Pressable>
         </LinearGradient>
-        <Entypo name="camera" size={24} color="black" style={styles.cameraIcon} />
+        
+        {/* Integrate CameraComponent here and pass onCapture function */}
+        <CameraComponent onCapture={(uri) => setCapturedImage(uri)} />
       </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 10,
+  },
   searchBar: {
     height: 40,
-    margin: 12,
+    marginVertical: 10,
     borderRadius: 10,
     paddingHorizontal: 10,
     backgroundColor: "#e9e9e9",
@@ -81,12 +89,18 @@ const styles = StyleSheet.create({
   ingredientsList: {
     flex: 1,
     marginHorizontal: 20,
+    marginVertical: 10,
+  },
+  capturedImage: {
+    width: "100%",
+    height: 200,
+    borderRadius: 10,
+    marginTop: 10,
   },
   bottomButtons: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingHorizontal: 20,
     paddingVertical: 10,
   },
   gradientButton: {
@@ -101,14 +115,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     width: "100%",
+    paddingVertical: 10,
     borderRadius: 10,
   },
   addButtonText: {
     color: "#FFF",
     fontSize: 16,
     fontWeight: "bold",
-  },
-  cameraIcon: {
-    padding: 10,
   },
 });
