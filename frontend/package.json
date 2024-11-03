@@ -15,10 +15,13 @@
     "preset": "jest-expo"
   },
   "dependencies": {
+    "@expo-google-fonts/source-serif-pro": "^0.2.3",
     "@expo/vector-icons": "^14.0.2",
     "@react-navigation/native": "^6.0.2",
+    "axios": "^1.7.7",
     "expo": "~51.0.28",
     "expo-camera": "^15.0.16",
+    "expo-app-loading": "^2.1.1",
     "expo-constants": "~16.0.2",
     "expo-font": "~12.0.9",
     "expo-image-picker": "^15.0.7",
