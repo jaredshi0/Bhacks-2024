@@ -6,7 +6,7 @@ from .llm.recipeGeneratorMultiple import generate_multiple_recipes
 import base64
 import numpy as np
 from .database.mongodb import add_ingredient, remove_ingredient, search_ingredient, store_ingredients, Ingredient, all_ingredients, exists
-import json
+from typing import List, Optional
 
 app = Flask(__name__)
 
@@ -100,8 +100,9 @@ def new_ingredient():
 
     data = request.get_json()
 
-    ingredient_name = data['ingredient']
-    ingredient_quantity = data['quantity']
+    ingredient_name = data.get('ingredient')
+    ingredient_quantity = data.get('quantity')
+
 
     if ingredient_name == None:
         return missing_info_response
