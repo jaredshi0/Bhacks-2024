@@ -1,13 +1,13 @@
 from .TextRec.ocr_component import OCR
 from flask import Flask, render_template, jsonify, request
-import cv2
 from .llm.receiptParser import parse_receipt
 from .llm.recipeGeneratorMultiple import generate_multiple_recipes, Recipe
-import base64
 import numpy as np
 from .database.mongodb import *
 from typing import List, Optional
 import json
+from PIL import Image
+import cv2
 
 app = Flask(__name__)
 
@@ -46,20 +46,19 @@ def photo_ingredients():
     '''
     data = request.get_json()
 
-    # If there is an image in the request return 400 
-    if not data or 'image' not in data:
+    if 'image' not in request.files:
         return missing_info_response
     
-    base64_image = data['image']
+    file = request.files['image']
 
-    _, encoded = base64_image.split(',', 1)
-    file_data = base64.b64decode(encoded)
+    image_PIL = Image.open(file.stream)
 
-    # Convert to nparray
-    nparr = np.frombuffer(file_data, np.uint8)
+    image_NP = np.array(image_PIL)
 
-    # Decode image
-    image = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+    image =  cv2.cvtColor(image_NP, cv2.COLOR_RGB2BGR)
+
+    cv2.imshow('image', image)
+    cv2.waitKey(0)
 
     # Pass the image to the OCR function
     ocr_String = OCR(image)
@@ -180,7 +179,7 @@ def recipe_to_dict(recipe):
         "directions": recipe.directions
     }
 
-@app.route('/save_reciepe', methods=['POST'])
+@app.route('/save_recipe', methods=['POST'])
 def save_recipe():
     data = request.get_json()
 
