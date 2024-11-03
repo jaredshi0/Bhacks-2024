@@ -10,7 +10,7 @@ import {
 	SourceSerifPro_400Regular,
   } from '@expo-google-fonts/source-serif-pro'
 
-const API_KEY = "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"; // Replace with your actual API key
+const API_KEY = "sk-proj-e1NXvcwm153YKdfIrJbcT3BlbkFJA3caADCdzN0qGKXwXvF7"; // Replace with your actual API key
 
 export default function RecipePage() {
   const router = useRouter(); // Initialize router for navigation
@@ -71,7 +71,7 @@ export default function RecipePage() {
         style={styles.headerContainer}
       >
         <Pressable style={styles.backButtonContainer} onPress={() => router.back()}>
-          <Entypo name="chevron-left" size={24} color="#FFF" />
+          <Entypo name="chevron-left" size={30} color="#FFF" />
         </Pressable>
         <Text style={styles.recipeNameText}>{recipe_name}</Text>
       </LinearGradient>
@@ -115,7 +115,8 @@ export default function RecipePage() {
 			  "ingredients_quantity" : ingredients_quantity,
 			  "directions" : directions
 		}
-	})
+	}),
+  router.back()
 }
 }>
 <Text style={styles.buttonText}> Save Recipe </Text>
@@ -132,7 +133,7 @@ const styles = StyleSheet.create({
   },
   headerContainer: {
     width: "100%",
-    height: 150,
+    height: 200,
     alignItems: "center",
     justifyContent: "center",
   },

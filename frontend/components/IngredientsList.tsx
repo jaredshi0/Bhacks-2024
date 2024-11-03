@@ -7,6 +7,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import CameraComponent from "./Camera";
 import axios from 'axios';
 import { useIsFocused } from "@react-navigation/native";
+import { router } from "expo-router";
 
 
 export default function IngredientsList() {
@@ -24,6 +25,7 @@ export default function IngredientsList() {
    
   const [ingredients, setIngredients] = useState([{"name":"test"}]);
   const [searchQuery, setSearchQuery] = useState("");
+  const [refreshPage, setRefresh] = useState(false);
   const [capturedImage, setCapturedImage] = useState<string | null>(null);
 
   const addIngredient = () => {
@@ -42,14 +44,15 @@ export default function IngredientsList() {
   type: 'image/jpeg', // Set the MIME type of the file 
   name: 'captured_image.jpg' }); // Send the form data to the Flask server running on a different device 
 
-
-  const response = await axios.post('http://10.239.57.74:5000/photo_ingredients', formData, { 
+  const response =await axios.post('http://10.239.57.74:5000/photo_ingredients', formData, { 
   headers: {
    'Content-Type': 'multipart/form-data'
    } 
-  });
-  
+  })
+  console.log(response);
+  router.replace("/");
   };
+
 
   const deleteIngredient = (index: number,name:string) => {
     setIngredients((prevIngredients) => prevIngredients.filter((_, i) => i !== index));
@@ -92,7 +95,12 @@ export default function IngredientsList() {
         ))}
       </ScrollView>
 
-      {capturedImage && <Image source={{ uri: capturedImage }} style={styles.capturedImage} />}
+      {capturedImage && (
+   <>
+      <Image source={{ uri: capturedImage }} style={styles.capturedImage} />
+   </>
+)}
+
 
       <View style={styles.bottomButtons}>
         <LinearGradient
