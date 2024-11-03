@@ -1,22 +1,31 @@
 import React from "react";
-import { View, StyleSheet , Pressable} from "react-native";
+import { View, StyleSheet, Pressable } from "react-native";
 import { Entypo } from "@expo/vector-icons";
-import { Link } from "expo-router";
+import { useRouter, useSegments } from "expo-router";
 
 export default function BottomNavigation() {
+  const router = useRouter();
+  const segments = useSegments();
+
+  // Determine the active route
+  const activeRoute = segments.length === 0 ? "index" : segments[0]; 
+
+  // Function to navigate to specific routes
+  const navigate = (route: "/" | "/RecipeGeneration" | "/RecipePage") => {
+    router.push(route);
+  };
+
   return (
     <View style={styles.bottomNav}>
-    <Link href="./" asChild>
-      <Pressable>
-        <Entypo name="home" size={24} color="#5db075" />
+      <Pressable onPress={() => navigate("/")}>
+        <Entypo name="home" size={24} color={activeRoute === "index" ? "#5db075" : "#3a405a"} />
       </Pressable>
-    </Link>
-    <Link href="./RecipeGeneration" asChild>
-      <Pressable>
-      <Entypo name="bowl" size={24} color="#3a425a" />
+      <Pressable onPress={() => navigate("/RecipeGeneration")}>
+        <Entypo name="bowl" size={24} color={activeRoute === "RecipeGeneration" ? "#5db075" : "#3a405a"} />
       </Pressable>
-    </Link>
-      <Pressable><Entypo name="list" size={24} color="#3a405a" /></Pressable>
+      <Pressable onPress={() => navigate("/")}>
+        <Entypo name="list" size={24} color={activeRoute === "RecipePage" ? "#5db075" : "#3a405a"} />
+      </Pressable>
     </View>
   );
 }

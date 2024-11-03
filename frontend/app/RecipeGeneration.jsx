@@ -103,7 +103,6 @@ const style = StyleSheet.create({
   buttonText: {
     flex: 0,
     color: '#FFFFFF',
-    fontFamily: 'InstrumentSans-italics'
   },
   listStyle: {
     flex: 3,
@@ -120,19 +119,16 @@ const style = StyleSheet.create({
   recipeTitle: {
     fontSize: 20,
     margin: 3,
-    fontWeight: '600',
-    fontFamily: 'InstrumentSans'
+    fontWeight: '400',
   },
   recipeIngredients: {
     fontSize: 15,
     margin: 1,
-    fontWeight: '600',
-    fontFamily: 'InstrumentSans'
+    fontWeight: '300',
   },
   firstDirection: {
     fontSize: 15,
     margin: 3,
-    fontWeight: '600',
-    fontFamily: 'InstrumentSans'
+    fontWeight: '300',
   }
 });

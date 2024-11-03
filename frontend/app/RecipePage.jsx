@@ -1,9 +1,10 @@
-import { Text, View, StyleSheet, ScrollView, Pressable } from "react-native";
+import { Text, View, StyleSheet, Pressable } from "react-native";
 import { router } from 'expo-router';
 import { useFonts } from 'expo-font';
 import AppLoading from 'expo-app-loading';
 import { useLocalSearchParams } from 'expo-router';
-import { LinearGradient } from 'expo-linear-gradient'; // Import LinearGradient
+import { LinearGradient } from 'expo-linear-gradient';
+import { Entypo } from '@expo/vector-icons'; 
 import {
   SourceSerifPro_400Regular,
 } from '@expo-google-fonts/source-serif-pro';
@@ -22,17 +23,18 @@ export default function RecipePage() {
   } else {
     return (
       <View style={style.pageStyle}>
-        <Pressable style={style.buttonLayout} onPress={() => router.back()}>
-          <Text style={style.backButton}>back</Text>
-        </Pressable>
-
-        {/* Gradient Header */}
+        {/* Full-Width Gradient Header */}
         <LinearGradient
           colors={["#2E7D32", "#A5D6A7"]}
-          style={style.recipeName}
+          style={style.headerContainer}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
         >
+          {/* Left Arrow Icon as Back Button */}
+          <Pressable style={style.backButtonContainer} onPress={() => router.back()}>
+            <Entypo name="chevron-left" size={24} color="#FFF" />
+          </Pressable>
+
           <Text style={style.recipeNameText}>{recipe_Name}</Text>
         </LinearGradient>
 
@@ -52,36 +54,32 @@ export default function RecipePage() {
 
 const style = StyleSheet.create({
   pageStyle: {
-    flex: 0,
-    padding: 30,
-    alignItems: 'center'
+    flex: 1,
+    alignItems: 'center',
+    backgroundColor: "#FFFFFF",
   },
-  buttonLayout: {
-    flex: 0,
-    alignSelf: 'flex-start'
+  headerContainer: {
+    width: '100%',       
+    height: 200,         
+    paddingTop: 40,      
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-  backButton: {
-    color: "#5DB075",
-    fontSize: 14
-  },
-  recipeName: {
-    flex: 0,
-    paddingLeft: 20,
-    paddingTop: 20,
-    paddingBottom: 10,
-    width: '100%', // Make the gradient full-width
-    alignItems: 'center', // Center the text within the gradient
+  backButtonContainer: {
+    position: 'absolute',
+    top: 50, // Move down from the top
+    left: 10,
   },
   recipeNameText: {
     fontSize: 36,
-    fontFamily: 'SourceSerifPro_400Regular',
     color: "#FFF", // White text color for contrast
+    fontFamily: 'SourceSerifPro_400Regular',
     textAlign: 'center',
+    fontWeight: '400',
+    marginTop: 10, // Move text further down if needed
   },
   ingredients: {
-    flex: 0,
     alignSelf: 'flex-start',
-    marginLeft: 5,
     padding: 20,
   },
   ingredientsText: {
@@ -90,10 +88,8 @@ const style = StyleSheet.create({
     fontWeight: '600',
   },
   directions: {
-    flex: 0,
     alignSelf: 'flex-start',
     padding: 20,
-    marginLeft: 5,
   },
   directionText: {
     fontSize: 16,
@@ -101,7 +97,6 @@ const style = StyleSheet.create({
     fontWeight: '600',
   },
   buttonStyle: {
-    flex: 0,
     backgroundColor: '#5db075',
     width: '80%',
     alignItems: 'center',
@@ -110,7 +105,7 @@ const style = StyleSheet.create({
     borderRadius: 10,
   },
   buttonText: {
-    fontFamily: 'InstrumentSans',
+    color: "#FFF",
     fontSize: 16,
     fontWeight: '700',
   }
