@@ -2,10 +2,10 @@ from .TextRec.ocr_component import OCR
 from flask import Flask, render_template, jsonify, request
 import cv2
 from .llm.receiptParser import parse_receipt
-from .llm.recipeGeneratorMultiple import generate_multiple_recipes
+from .llm.recipeGeneratorMultiple import generate_multiple_recipes, Recipe
 import base64
 import numpy as np
-from .database.mongodb import add_ingredient, remove_ingredient, search_ingredient, store_ingredients, Ingredient, all_ingredients
+from .database.mongodb import *
 from typing import List, Optional
 import json
 
@@ -152,9 +152,47 @@ def generate_recipe():
     # Pass the ingredients to the LLM
     recipes = generate_multiple_recipes(ingredients)
 
-    
+    output = []
 
-    return jsonify(recipes)
+    for recipe in recipes:
+        output.append({
+            "recipe_name": recipe.recipe_name,
+            "ingredients": recipe.ingredients,
+            "directions": recipe.directions
+        })
+
+    return jsonify(output)
+
+@app.route('/save_reciepe', methods=['POST'])
+def save_recipe():
+    data = request.get_json()
+
+    recipe_name = data.get('recipe_name')
+    ingredients = data.get('ingredients')
+    directions = data.get('directions')
+
+    if recipe_name == None or ingredients == None or directions == None:
+        return missing_info_response
+    
+    new_recipe = Recipe(recipe_name=recipe_name, ingredients=ingredients, directions=directions)
+
+    add_recipe(new_recipe)
+
+    return success_response
+
+@app.route('/delete_recipe', methods=['DELETE'])
+def delete_recipe():
+    data = request.get_json()
+
+    recipe_name = data.get('recipe_name')
+
+    if recipe_name == None:
+        return missing_info_response
+
+    remove_recipe(recipe_name)
+
+    return success_response
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
