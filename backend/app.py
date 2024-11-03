@@ -6,8 +6,8 @@ import numpy as np
 from .database.mongodb import *
 from typing import List, Optional
 import json
-from PIL import Image
 import cv2
+import base64
 
 app = Flask(__name__)
 
@@ -46,16 +46,19 @@ def photo_ingredients():
     '''
     data = request.get_json()
 
-    if 'image' not in request.files:
-        return missing_info_response
-    
-    file = request.files['image']
+    uri = data['image']
 
-    image_PIL = Image.open(file.stream)
+    # Convert the base64 string to an image
+    if uri.startswith('data:image/png;base64,'):
+        uri = uri.replace('data:image/png;base64,', '')
 
-    image_NP = np.array(image_PIL)
+    image_data = base64.b64decode(uri)
 
-    image =  cv2.cvtColor(image_NP, cv2.COLOR_RGB2BGR)
+    # Convert the byte data to a NumPy array
+    np_array = np.frombuffer(image_data, np.uint8)
+
+    # Decode the image to an OpenCV format
+    image = cv2.imdecode(np_array, cv2.IMREAD_COLOR)
 
     cv2.imshow('image', image)
     cv2.waitKey(0)
