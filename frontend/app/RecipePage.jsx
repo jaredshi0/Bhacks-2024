@@ -1,126 +1,154 @@
-import { Text, View, StyleSheet, Pressable } from "react-native";
-import { router } from 'expo-router';
-import { useFonts } from 'expo-font';
-import AppLoading from 'expo-app-loading';
-import { useLocalSearchParams } from 'expo-router';
+import React, { useEffect, useState } from "react";
+import { Text, View, StyleSheet, Image, ActivityIndicator, Pressable } from "react-native";
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Entypo } from '@expo/vector-icons'; 
-import {
-  SourceSerifPro_400Regular,
-} from '@expo-google-fonts/source-serif-pro';
+import { Entypo } from '@expo/vector-icons';
+import axios from 'axios';
+
+const API_KEY = "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"; // Replace with your actual API key
 
 export default function RecipePage() {
-  let [fontsLoaded] = useFonts({
-    SourceSerifPro_400Regular,
-    'InstrumentSans': require('../assets/fonts/InstrumentSans.ttf'),
-  });
+  const router = useRouter(); // Initialize router for navigation
+  const { recipe_Name, ingredients, directions } = useLocalSearchParams();
+  const [imageUrl, setImageUrl] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [errorMessage, setErrorMessage] = useState(null);
 
-  const params = useLocalSearchParams();
-  const { recipe_Name, ingredients, directions } = params;
+  useEffect(() => {
+    const generateRecipeImage = async () => {
+      try {
+        setLoading(true);
+        setErrorMessage(null);
 
-  if (!fontsLoaded) {
-    return <AppLoading />;
-  } else {
-    return (
-      <View style={style.pageStyle}>
-        <LinearGradient
-          colors={["#2E7D32", "#A5D6A7"]}
-          style={style.headerContainer}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
-        >
-          {/* Left Arrow Icon as Back Button */}
-          <Pressable style={style.backButtonContainer} onPress={() => router.back()}>
-            <Entypo name="chevron-left" size={24} color="#FFF" />
-          </Pressable>
+        const response = await axios.post(
+          'https://api.openai.com/v1/images/generations',
+          {
+            model: "dall-e-3",
+            prompt: `A high-quality food photograph of a well-presented dish of ${recipe_Name}. Bright colors, appetizing look, professional lighting.`,
+            n: 1,
+            size: "1024x1024",
+          },
+          {
+            headers: {
+              'Authorization': `Bearer ${API_KEY}`,
+              'Content-Type': 'application/json',
+            },
+          }
+        );
 
-          <Text style={style.recipeNameText}>{recipe_Name}</Text>
-        </LinearGradient>
+        if (response.data && response.data.data && response.data.data.length > 0) {
+          const image_url = response.data.data[0].url;
+          setImageUrl(image_url);
+        } else {
+          console.error("Unexpected response format:", response.data);
+          setErrorMessage("Failed to generate image. Unexpected response format.");
+        }
+      } catch (error) {
+        console.error("Error generating image:", error.response ? error.response.data : error.message);
+        setErrorMessage("Failed to generate image. Please check your connection or try again later.");
+      } finally {
+        setLoading(false);
+      }
+    };
 
-        <View style={style.ingredients}>
-          <Text style={style.ingredientsText}>{ingredients}</Text>
-        </View>
-        <View style={style.directions}>
-          <Text style={style.directionText}>{directions}</Text>
-        </View>
+    generateRecipeImage();
+  }, [recipe_Name]);
 
-        {/* Gradient Save Recipe Button */}
-        <LinearGradient
-          colors={["#2E7D32", "#A5D6A7"]}
-          style={style.gradientButton}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
-        >
-          <Pressable style={style.buttonContent} onPress={() => console.log("for backend")}>
-            <Text style={style.buttonText}> Save Recipe </Text>
-          </Pressable>
-        </LinearGradient>
+  return (
+    <View style={styles.container}>
+      <LinearGradient
+        colors={["#2E7D32", "#A5D6A7"]}
+        style={styles.headerContainer}
+      >
+        <Pressable style={styles.backButtonContainer} onPress={() => router.back()}>
+          <Entypo name="chevron-left" size={24} color="#FFF" />
+        </Pressable>
+        <Text style={styles.recipeNameText}>{recipe_Name}</Text>
+      </LinearGradient>
+
+      {/* Display Generated Image at the Top */}
+      {loading ? (
+        <ActivityIndicator size="large" color="#0000ff" style={styles.loadingIndicator} />
+      ) : imageUrl ? (
+        <Image source={{ uri: imageUrl }} style={styles.recipeImage} />
+      ) : (
+        <Text style={styles.errorText}>{errorMessage}</Text>
+      )}
+
+      {/* Display Ingredients */}
+      <View style={styles.ingredients}>
+        <Text style={styles.sectionTitle}>Ingredients</Text>
+        <Text style={styles.ingredientsText}>{ingredients}</Text>
       </View>
-    );
-  }
+
+      {/* Display Directions */}
+      <View style={styles.directions}>
+        <Text style={styles.sectionTitle}>Directions</Text>
+        <Text style={styles.directionText}>{directions}</Text>
+      </View>
+    </View>
+  );
 }
 
-const style = StyleSheet.create({
-  pageStyle: {
+const styles = StyleSheet.create({
+  container: {
     flex: 1,
-    alignItems: 'center',
     backgroundColor: "#FFFFFF",
   },
   headerContainer: {
-    width: '100%',       
-    height: 200,         
-    paddingTop: 40,      
-    alignItems: 'center',
-    justifyContent: 'center',
+    width: "100%",
+    height: 150,
+    alignItems: "center",
+    justifyContent: "center",
   },
   backButtonContainer: {
     position: 'absolute',
-    top: 50, // Move down from the top
+    top: 50,
     left: 10,
   },
   recipeNameText: {
     fontSize: 36,
-    color: "#FFF", // White text color for contrast
-    textAlign: 'center',
-    fontWeight: '400',
-    marginTop: 10, // Move text further down if needed
+    color: "#FFF",
+    fontWeight: "bold",
+  },
+  loadingIndicator: {
+    marginTop: 20,
+    alignSelf: "center",
+  },
+  recipeImage: {
+    width: "100%",
+    height: 300,
+    alignSelf: "center",
+    marginVertical: 10,
+    borderRadius: 10,
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    paddingTop: 10,
+    paddingHorizontal: 20,
   },
   ingredients: {
-    alignSelf: 'flex-start',
-    padding: 20,
+    paddingHorizontal: 20,
   },
   ingredientsText: {
     fontSize: 16,
-    fontFamily: 'InstrumentSans',
-    fontWeight: '600',
+    fontWeight: "600",
+    paddingVertical: 10,
   },
   directions: {
-    alignSelf: 'flex-start',
-    padding: 20,
+    paddingHorizontal: 20,
+    paddingBottom: 20,
   },
   directionText: {
     fontSize: 16,
-    fontFamily: 'InstrumentSans',
-    fontWeight: '600',
+    fontWeight: "600",
+    paddingVertical: 10,
   },
-  gradientButton: {
-    width: '80%',
-    height: 40,
-    borderRadius: 10,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginVertical: 20,
-  },
-  buttonContent: {
-    width: '100%',
-    height: '100%',
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: 10,
-  },
-  buttonText: {
-    color: "#FFF",
+  errorText: {
+    color: "red",
     fontSize: 16,
-    fontWeight: '700',
-  }
+    textAlign: "center",
+    marginTop: 10,
+  },
 });

@@ -4,6 +4,7 @@ import IngredientItem from "./IngredientItem";
 import { addIngredientToList } from "../constants/ingrUtil";
 import { Entypo } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
+import axios from 'axios';
 import CameraComponent from "./Camera";
 
 export default function IngredientsList() {
@@ -20,8 +21,12 @@ export default function IngredientsList() {
     setIngredients((prevIngredients) => [...prevIngredients, newIngredient]);
   };
 
-  const handleCapture = (uri: string) => {
+  const handleCapture = async (uri: string) => {
     setCapturedImage(uri);
+
+    const formData = new FormData(); formData.append('image', uri);
+    const response = await axios.post('http://localhost:5000/upload', formData, { headers: { 'Content-Type': 'multipart/form-data', }, });
+
   };
 
   const deleteIngredient = (index: number) => {

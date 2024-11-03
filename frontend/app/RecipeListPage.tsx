@@ -1,32 +1,39 @@
 import React, { useState } from "react";
-import { View, Text, StyleSheet, TextInput, ScrollView } from "react-native";
+import { View, Text, StyleSheet, TextInput, ScrollView, Pressable } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import BottomNavigation from "@/components/BottomNav";
+import { Link } from 'expo-router';
+import BottomNavigation from "../components/BottomNav";
 
 export default function RecipeListPage() {
   const [searchQuery, setSearchQuery] = useState("");
 
   const recipeList = [
     {
-      title: "Bacon Egg and Cheese",
-      description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed scelerisque placerat condimentum. Pellentesque vitae libero id nibh sollicitudin suscipit ac sit amet sem. Mauris mattis feugiat congue. Sed tristique erat ante, sed consequat dui ultrices id.",
-      prepTime: "XX:XX",
+      recipe_Name: "Bacon Egg and Cheese",
+      ingredients: "Ingredients: eggs, bacon, cheese",
+      directions: ["Step 1", "Step 2"],
+      description: "A tasty bacon, egg, and cheese sandwich.",
+      prepTime: "10:00",
     },
     {
-      title: "Avocado Toast",
-      description: "A simple and delicious avocado toast recipe with a hint of lime and a sprinkle of chili flakes.",
+      recipe_Name: "Avocado Toast",
+      ingredients: "Ingredients: avocado, bread, seasoning",
+      directions: ["Step 1", "Step 2"],
+      description: "Simple and delicious avocado toast.",
       prepTime: "05:00",
     },
     {
-      title: "Pancakes",
-      description: "Fluffy pancakes with a hint of vanilla and a drizzle of maple syrup.",
+      recipe_Name: "Pancakes",
+      ingredients: "Ingredients: flour, milk, eggs",
+      directions: ["Step 1", "Step 2"],
+      description: "Fluffy pancakes with syrup.",
       prepTime: "15:00",
     },
   ];
 
   // Filter recipes based on search query
   const filteredRecipes = recipeList.filter(recipe =>
-    recipe.title.toLowerCase().includes(searchQuery.toLowerCase())
+    recipe.recipe_Name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   return (
@@ -54,11 +61,24 @@ export default function RecipeListPage() {
       {/* Recipe List */}
       <ScrollView style={styles.recipeList}>
         {filteredRecipes.map((recipe, index) => (
-          <View key={index} style={styles.recipeItem}>
-            <Text style={styles.recipeTitle}>{recipe.title}</Text>
-            <Text style={styles.recipeDescription}>{recipe.description}</Text>
-            <Text style={styles.recipePrepTime}>Estimated Preparation Time: {recipe.prepTime}</Text>
-          </View>
+          <Link
+            asChild
+            href={{
+              pathname: './RecipePage',
+              params: {
+                recipe_Name: recipe.recipe_Name,
+                ingredients: recipe.ingredients,
+                directions: recipe.directions,
+              },
+            }}
+            key={index}
+          >
+            <Pressable style={styles.recipeItem}>
+              <Text style={styles.recipeTitle}>{recipe.recipe_Name}</Text>
+              <Text style={styles.recipeDescription}>{recipe.description}</Text>
+              <Text style={styles.recipePrepTime}>Estimated Preparation Time: {recipe.prepTime}</Text>
+            </Pressable>
+          </Link>
         ))}
       </ScrollView>
       <BottomNavigation />
@@ -73,7 +93,7 @@ const styles = StyleSheet.create({
   },
   headerContainer: {
     width: "100%",
-    height: 200,
+    height: 150,
     alignItems: "center",
     justifyContent: "center",
   },

@@ -1,16 +1,15 @@
-import { Text, View, StyleSheet, ScrollView, Pressable } from "react-native";
+import React, { useState } from "react";
+import { View, Text, StyleSheet, TextInput, ScrollView, Pressable } from "react-native";
 import { useFonts } from 'expo-font';
 import AppLoading from 'expo-app-loading';
 import { Link } from 'expo-router';
 import BottomNavigation from "../components/BottomNav";
-import { LinearGradient } from 'expo-linear-gradient'; // Import LinearGradient
+import { LinearGradient } from 'expo-linear-gradient';
 
 import {
   SourceSerifPro_400Regular,
 } from '@expo-google-fonts/source-serif-pro';
-import axios from "axios";
 
-const userIP = "10.239.57.74";
 export default function RecipeGeneration() {
   let [fontsLoaded] = useFonts({
     SourceSerifPro_400Regular,
@@ -18,50 +17,62 @@ export default function RecipeGeneration() {
     'InstrumentSans-italics': require('../assets/fonts/InstrumentSans-Italic.ttf'),
   });
 
-  const testList = [
-    { recipe_Name: 'bacon egg and cheese', ingredients: "testing ingredients \ningredients 1 \ningredients 2 \ningredients 3", directions: ["dir test 1", "dir test 2"] },
-    { recipe_Name: 'isaac sucks', ingredients: 'isaac sucks', directions: ['isaac sucks', 'issac sucks'] },
-    { recipe_Name: 'bacon egg and cheese', ingredients: "testing ingredients \ningredients 1 \ningredients 2 \ningredients 3", directions: ["dir test 1", "dir test 2"] },
-    { recipe_Name: 'bacon egg and cheese', ingredients: "testing ingredients \ningredients 1 \ningredients 2 \ningredients 3", directions: ["dir test 1", "dir test 2"] }
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const recipeList = [
+    { recipe_Name: 'Bacon Egg and Cheese', ingredients: "Ingredients: eggs, bacon, cheese", directions: ["Step 1", "Step 2"], description: "A tasty bacon, egg, and cheese sandwich.", prepTime: "10:00" },
+    { recipe_Name: 'Avocado Toast', ingredients: "Ingredients: avocado, bread, seasoning", directions: ["Step 1", "Step 2"], description: "Simple and delicious avocado toast.", prepTime: "05:00" },
+    { recipe_Name: 'Pancakes', ingredients: "Ingredients: flour, milk, eggs", directions: ["Step 1", "Step 2"], description: "Fluffy pancakes with syrup.", prepTime: "15:00" },
   ];
+
+  // Filter recipes based on search query
+  const filteredRecipes = recipeList.filter(recipe =>
+    recipe.recipe_Name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   if (!fontsLoaded) {
     return <AppLoading />;
   } else {
     return (
-      <View style={style.pageTemp}>
+      <View style={style.container}>
+        {/* Gradient Header */}
         <LinearGradient
           colors={["#2E7D32", "#A5D6A7"]}
-          style={style.topHeader}
+          style={style.headerContainer}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
         >
-          <Text numberOfLines={2} style={style.titleStyle}>Recipe{"\n"}Generation</Text>
+          <Text style={style.headerText}>Recipe Generation</Text>
         </LinearGradient>
 
-        <Pressable style={style.buttonStyle} onPress={() => console.log("for backend")}>
-          <Text style={style.buttonText}>Click to Generate!</Text>
-        </Pressable>
-        
-        <ScrollView style={{ flex: 1 }}>
-          <View style={style.listStyle}>
-            {testList.map((item, i) => (
-              <Link
-                asChild
-                href={{
-                  pathname: './RecipePage',
-                  params: { recipe_Name: item.recipe_Name, ingredients: item.ingredients, directions: item.directions },
-                }}
-                key={i}
-              >
-                <Pressable style={style.recipeList}>
-                  <Text style={style.recipeTitle}>{item.recipe_Name}</Text>
-                  <Text style={style.recipeIngredients}>{item.ingredients}</Text>
-                  <Text style={style.firstDirection}>{item.directions}</Text>
-                </Pressable>
-              </Link>
-            ))}
-          </View>
+        {/* Search Bar */}
+        <Text style={style.searchLabel}>Search for a Recipe:</Text>
+        <TextInput
+          style={style.searchBar}
+          placeholder="e.g. Bacon Egg and Cheese"
+          placeholderTextColor="#8A8A8A"
+          value={searchQuery}
+          onChangeText={setSearchQuery}
+        />
+
+        {/* Recipe List */}
+        <ScrollView style={style.recipeList}>
+          {filteredRecipes.map((item, index) => (
+            <Link
+              asChild
+              href={{
+                pathname: './RecipePage',
+                params: { recipe_Name: item.recipe_Name, ingredients: item.ingredients, directions: item.directions },
+              }}
+              key={index}
+            >
+              <Pressable style={style.recipeItem}>
+                <Text style={style.recipeTitle}>{item.recipe_Name}</Text>
+                <Text style={style.recipeDescription}>{item.description}</Text>
+                <Text style={style.recipePrepTime}>Estimated Preparation Time: {item.prepTime}</Text>
+              </Pressable>
+            </Link>
+          ))}
         </ScrollView>
 
         <BottomNavigation />
@@ -71,64 +82,57 @@ export default function RecipeGeneration() {
 }
 
 const style = StyleSheet.create({
-  pageTemp: {
+  container: {
+    flex: 1,
     backgroundColor: "#FFFFFF",
-    flex: 1,
   },
-  topHeader: {
-    flex: 0.38,
-    height: 200,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: "10%",
+  headerContainer: {
+    width: "100%",
+    height: 150,
+    alignItems: "center",
+    justifyContent: "center",
   },
-  titleStyle: {
-    fontSize: 36,
-    fontWeight: 'bold',
-    color: "#FFF", 
-    textAlign: "center"
+  headerText: {
+    fontSize: 32,
+    color: "#FFF",
+    fontWeight: "bold",
   },
-  buttonStyle: {
-    flex: 1,
-    width: '80%',
-    height: '5%',
-    backgroundColor: '#3a405a',
-    alignSelf: 'center',
-    alignItems: 'center',
-    justifyContent: 'center',
+  searchLabel: {
+    fontSize: 16,
+    fontWeight: "bold",
+    paddingHorizontal: 20,
+    paddingTop: 10,
+  },
+  searchBar: {
+    height: 40,
+    marginVertical: 10,
+    marginHorizontal: 20,
     borderRadius: 10,
-    position: 'absolute',
-    top: '21%'
-  },
-  buttonText: {
-    flex: 0,
-    color: '#FFFFFF',
-  },
-  listStyle: {
-    flex: 3,
-    alignItems: 'center'
+    paddingHorizontal: 10,
+    backgroundColor: "#e9e9e9",
+    color: "#000",
   },
   recipeList: {
-    flex: 0,
-    backgroundColor: '#e9e9e9',
-    width: "80%",
-    marginBottom: 20,
-    paddingLeft: 10,
+    flex: 1,
+    marginHorizontal: 20,
+  },
+  recipeItem: {
+    backgroundColor: "#f2f2f2",
     borderRadius: 10,
+    padding: 15,
+    marginBottom: 15,
   },
   recipeTitle: {
     fontSize: 20,
-    margin: 3,
-    fontWeight: '400',
+    fontWeight: "bold",
+    marginBottom: 5,
   },
-  recipeIngredients: {
-    fontSize: 15,
-    margin: 1,
-    fontWeight: '300',
+  recipeDescription: {
+    fontSize: 14,
+    marginBottom: 10,
   },
-  firstDirection: {
-    fontSize: 15,
-    margin: 3,
-    fontWeight: '300',
-  }
+  recipePrepTime: {
+    fontSize: 14,
+    fontWeight: "600",
+  },
 });
