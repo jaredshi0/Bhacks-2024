@@ -71,24 +71,6 @@ def photo_ingredients():
 
     return success_response
 
-@app.route('/generate_multiple_recipe', methods=['GET'])
-def generate_multiple_recipe():
-    '''
-    High Level:
-    - Get the ingredients from the request or from DB
-    - Pass the ingredients to the LLM
-    - Get the recipes
-    - Return the recipes
-    '''
-
-    # Get ingredients from request
-    ingredients = all_ingredients()
-
-    # Pass the ingredients to the LLM
-    recipes = generate_multiple_recipes(ingredients)
-
-    return jsonify(recipes)
-
 @app.route('/manual_ingredient', methods=['POST'])
 def manual_ingredient():
     '''
@@ -151,6 +133,28 @@ def get_ingredients():
         })
     
     return jsonify(output)
+
+
+# Endpoints for Recipe Logic
+@app.route('/generate_recipe', methods=['GET'])
+def generate_recipe():
+    '''
+    High Level:
+    - Get the ingredients from the request or from DB
+    - Pass the ingredients to the LLM
+    - Get the recipes
+    - Return the recipes
+    '''
+
+    # Get ingredients from request
+    ingredients = all_ingredients()
+
+    # Pass the ingredients to the LLM
+    recipes = generate_multiple_recipes(ingredients)
+
+    
+
+    return jsonify(recipes)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
