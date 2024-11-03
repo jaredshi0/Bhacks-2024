@@ -10,15 +10,15 @@ import json
 
 app = Flask(__name__)
 
-missing_info_response = {
+missing_info_response = json.dumps({
     "code": 400,
     "message": "Missing information"
-}
+})
 
-success_response = {
+success_response = json.dumps({
     "code": 200,
     "message": "Success"
-}
+})
 
 '''
 TO DO:
