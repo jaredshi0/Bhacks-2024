@@ -54,11 +54,21 @@ def photo_ingredients():
     file_bytes = np.frombuffer(image_file.read(), np.uint8)
     image = cv2.imdecode(file_bytes, cv2.IMREAD_COLOR)
 
+    cv2.imshow("Image", image)
+
     # Pass the image to the OCR function
     ocr_String = OCR(image)
 
+    ocr_String += "Chicken 1 lb"
+
+    # print(ocr_String)
+
     # Pass OCR string back to the LLM to process
     ingredients = parse_receipt(ocr_String)
+
+    # print(ingredients)
+    # print(type(ingredients[0]))
+    # print(type(ingredients))
 
     store_ingredients(ingredients)
 

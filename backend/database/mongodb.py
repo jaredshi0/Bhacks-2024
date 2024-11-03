@@ -46,7 +46,7 @@ def search_ingredient(name: str):
 
 # Store parsed ingredients in MongoDB
 def store_ingredients(ingredients: List[Ingredient]):
-    for ingredient in ingredients:
+    for ingredient in ingredients.list:
         add_ingredient(ingredient)
 
 def all_ingredients():
