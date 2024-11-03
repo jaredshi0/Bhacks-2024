@@ -1,7 +1,6 @@
 from pymongo import MongoClient
 from typing import List, Optional
 from pydantic import BaseModel
-from backend.llm.receiptParser import parse_receipt
 from backend.llm.recipeGeneratorMultiple import Recipe
 
 # MongoDB setup
@@ -49,6 +48,11 @@ def all_ingredients():
     # return all the ingredients in the database in this format {{name: "name", quantity: "quantity"}, ...}
     return ingredients_collection.find()
 
+##########################
+# Recipe Functions
+##########################
+
+
 # Add a Recipe
 def add_recipe(recipe: Recipe):
     recipies_collection.insert_one(recipe.dict())
@@ -62,26 +66,19 @@ def remove_recipe(name: str):
     else:
         print(f"{name} not found in the database.")
 
+def all_recipes():
+    # return all the recipes in the database in this format {{recipe_name: "name", ingredients: [{name: "name", quantity: "quantity"}, ...], directions: ["direction1", "direction2", ...]}, ...}
+    return recipies_collection.find()
+
 # Use existing functions
 if __name__ == "__main__":
-    # Parse receipt as before
-    receipt_scanned = '''potato 1kg'''
-    ingredients_list = parse_receipt(receipt_scanned)
-    
-    # Store each ingredient in MongoDB
-    
-    store_ingredients(ingredients_list.list)
-    
-    # Example usage
-    add_ingredient(Ingredient(name="Banana", quantity="0.442 kg"))
-    search_ingredient("potato")
-    # remove_ingredient("potato")
+    from backend.llm.receiptParser import parse_receipt
+    from backend.llm.recipeGeneratorMultiple import generate_multiple_recipes
 
-    # # remove everything in db
-    # ingredients_collection.delete_many({})
-
-    # print everything in the db
     for ingredient in all_ingredients():
         print(ingredient)
+
+    # generate recipes
+    ingredients = {"ingredients": [{"name": "chicken", "quantity": "1 lb"}, {"name": "rice", "quantity": "1 cup"}]}
     
 

@@ -135,7 +135,10 @@ def get_ingredients():
     return jsonify(output)
 
 
+#################################
 # Endpoints for Recipe Logic
+#################################
+
 @app.route('/generate_recipe', methods=['GET'])
 def generate_recipe():
     '''
@@ -147,7 +150,10 @@ def generate_recipe():
     '''
 
     # Get ingredients from request
-    ingredients = all_ingredients()
+    ingredients = get_ingredients()
+
+    # turn the ingredients into a list of dictionaries it is a json object jsonify(output)
+    ingredients = json.loads(ingredients.data)
 
     # Pass the ingredients to the LLM
     recipes = generate_multiple_recipes(ingredients)
@@ -160,6 +166,7 @@ def generate_recipe():
             "ingredients": recipe.ingredients,
             "directions": recipe.directions
         })
+    print(output)
 
     return jsonify(output)
 
@@ -192,6 +199,20 @@ def delete_recipe():
     remove_recipe(recipe_name)
 
     return success_response
+
+@app.route('/get_recipes', methods=['GET'])
+def get_recipes():
+    recipes = all_recipes()
+    
+    output = []
+    for recipe in recipes:
+        output.append({
+            "recipe_name": recipe['recipe_name'],
+            "ingredients": recipe['ingredients'],
+            "directions": recipe['directions']
+        })
+    
+    return jsonify(output)
 
 
 if __name__ == '__main__':
