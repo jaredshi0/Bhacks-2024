@@ -160,26 +160,25 @@ def generate_recipe():
 
     output = []
 
-    for index, recipe in enumerate(recipes):
-        output.append({
-            "recipe_name": recipe.recipe_name,
-            "ingredients": [],
-            "directions": recipe.directions
-        })
-
-        for ingredient in recipe.ingredients:
-            output[index][ingredient].append({
-                json.dumps(
-                    {
-                        "name": ingredient.name,
-                        "quantity": ingredient.quantity
-                    }
-                )
-            })
+    for recipe in recipes:
+        output.append(recipe_to_dict(recipe))
 
     print(output)
 
     return jsonify(output)
+
+def ingredient_to_dict(ingredient):
+    return {
+        "name": ingredient.name,
+        "quantity": ingredient.quantity
+    }
+
+def recipe_to_dict(recipe):
+    return {
+        "recipe_name": recipe.recipe_name,
+        "ingredients": [ingredient_to_dict(ingredient) for ingredient in recipe.ingredients],
+        "directions": recipe.directions
+    }
 
 @app.route('/save_reciepe', methods=['POST'])
 def save_recipe():
