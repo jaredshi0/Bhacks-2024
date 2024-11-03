@@ -2,6 +2,8 @@ import { Text, View, StyleSheet, ScrollView, Button, Pressable} from "react-nati
 import { useFonts } from 'expo-font';
 import AppLoading from 'expo-app-loading';
 import {Link} from 'expo-router'
+import BottomNavigation from "../components/BottomNav";
+
 import {
   SourceSerifPro_400Regular,
 } from '@expo-google-fonts/source-serif-pro'
@@ -30,7 +32,6 @@ export default function RecipeGeneration() {
   }else
     {
     return (
-      <ScrollView>
       <View style = {style.pageTemp}>
         <View style = {style.topHeader}>
           <Text numberOfLines={2} style = {style.titleStyle}> Recipe{"\n"}Generation</Text>
@@ -39,7 +40,7 @@ export default function RecipeGeneration() {
           <Pressable style={style.buttonStyle} onPress={() => console.log("for backend")}>
             <Text style={style.buttonText}> Click to Generate! </Text>
           </Pressable>
-
+        <ScrollView style={{flex:1}}>
         <View style = {style.listStyle}>
         {
           testList.map((item,i)=>
@@ -58,8 +59,9 @@ export default function RecipeGeneration() {
           })
           }
         </View>
+        </ScrollView>
+        <BottomNavigation />
       </View>
-      </ScrollView>
     );
   }
 }
@@ -73,7 +75,7 @@ const style = StyleSheet.create(
     },
     topHeader:
     {
-      flex:1,
+      flex:.38,
       height: 200,
       backgroundColor: '#5db075',
       alignItems : 'center',
