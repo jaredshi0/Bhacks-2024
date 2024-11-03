@@ -5,9 +5,20 @@ from .llm.receiptParser import parse_receipt
 from .llm.recipeGeneratorMultiple import generate_multiple_recipes
 import base64
 import numpy as np
-from .database.mongodb import add_ingredient, remove_ingredient, search_ingredient, store_ingredients, Ingredient
+from .database.mongodb import add_ingredient, remove_ingredient, search_ingredient, store_ingredients, Ingredient, all_ingredients
+import json
 
 app = Flask(__name__)
+
+missing_info_response = {
+    "code": 400,
+    "message": "Missing information"
+}
+
+success_response = {
+    "code": 200,
+    "message": "Success"
+}
 
 '''
 TO DO:
@@ -36,7 +47,7 @@ def store_ingredients():
 
     # If there is an image in the request return 400 
     if not data or 'image' not in data:
-        return 'No image provided', 400
+        return missing_info_response
     
     base64_image = data['image']
 
@@ -58,7 +69,7 @@ def store_ingredients():
     for ingredient in ingredients:
         add_ingredient(ingredient)
 
-    return 200
+    return success_response
 
 @app.route('/generate_recipe_multiple', methods=['GET'])
 def generate_recipe_multiple():
@@ -93,7 +104,7 @@ def new_ingredient():
     ingredient_quantity = data['quantity']
 
     if ingredient_name == None:
-        return 400 # Missing ingredient name
+        return missing_info_response
 
     new_ingredient = Ingredient(name = ingredient_name)
 
@@ -102,7 +113,7 @@ def new_ingredient():
 
     add_ingredient(new_ingredient)
 
-    return 200
+    return success_response
 
 @app.route('/remove_ingredient', methods=['DELETE'])
 def remove_ingredient():
@@ -111,11 +122,11 @@ def remove_ingredient():
     ingredient_name = data['ingredient']
 
     if ingredient_name == None:
-        return 400 # Missing ingredient name
+        return missing_info_response
 
     remove_ingredient(ingredient_name)
 
-    return 200
+    return success_response
 
 @app.route('/get_ingredients', methods=['GET'])
 def get_ingredients():
@@ -124,7 +135,8 @@ def get_ingredients():
     - Get all ingredients from the DB
     - Return the ingredients
     '''
-    ...
+    ingredients = all_ingredients()
+    return jsonify(ingredients)
 
 @app.route('/update_ingredient', methods=['POST'])
 def update_ingredient():
