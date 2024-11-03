@@ -5,7 +5,7 @@ from .llm.receiptParser import parse_receipt
 from .llm.recipeGeneratorMultiple import generate_multiple_recipes
 import base64
 import numpy as np
-from .database.mongodb import add_ingredient, remove_ingredient, search_ingredient, store_ingredients, Ingredient, all_ingredients
+from .database.mongodb import add_ingredient, remove_ingredient, search_ingredient, store_ingredients, Ingredient, all_ingredients, exists
 from typing import List, Optional
 
 app = Flask(__name__)
@@ -23,7 +23,7 @@ success_response = {
 '''
 TO DO:
 - Process Image: Done
-- Get Ingredients: In Progress
+- Get Ingredients: Done
 - Add Ingredient: Done
 - Remove Ingredients: Done
 - Update Ingredient: Not Started
@@ -71,8 +71,8 @@ def store_ingredients():
 
     return success_response
 
-@app.route('/generate_recipe_multiple', methods=['GET'])
-def generate_recipe_multiple():
+@app.route('/generate_multiple_recipe', methods=['GET'])
+def generate_multiple():
     '''
     High Level:
     - Get the ingredients from the request or from DB
@@ -82,10 +82,10 @@ def generate_recipe_multiple():
     '''
 
     # Get ingredients from request
-    ingredients = request.json['ingredients']
+    ingredients = all_ingredients()
 
     # Pass the ingredients to the LLM
-    recipes = generate_recipe_multiple(ingredients)
+    recipes = generate_multiple_recipes(ingredients)
 
     return jsonify(recipes)
 
@@ -106,11 +106,16 @@ def new_ingredient():
 
     if ingredient_name == None:
         return missing_info_response
+    
+    # Check if an element with ingredient_name already exists
+    if exists(ingredient_name) != None:
+        # Remove it 
+        remove_ingredient(ingredient_name)
 
     if ingredient_quantity != None:
-        new_ingredient = Ingredient(name = ingredient_name, quantity = ingredient_quantity)
+        new_ingredient = Ingredient(name=ingredient_name, quantity=ingredient_quantity)
     else:
-        new_ingredient = Ingredient(name = ingredient_name)
+        new_ingredient = Ingredient(name=ingredient_name)
 
     add_ingredient(new_ingredient)
 
@@ -138,16 +143,6 @@ def get_ingredients():
     '''
     ingredients = all_ingredients()
     return jsonify(ingredients)
-
-@app.route('/update_ingredient', methods=['POST'])
-def update_ingredient():
-    '''
-    High Level:
-    - Get the ingredient from the request
-    - Update the ingredient in the DB
-    - Return the ingredient
-    '''
-    ...
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)

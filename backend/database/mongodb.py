@@ -46,6 +46,9 @@ def store_ingredients(ingredients: List[Ingredient]):
 def all_ingredients():
     return ingredients_collection.find()
 
+def exists(name):
+    return ingredients_collection.find_one({"name": name})
+
 # Use existing functions
 if __name__ == "__main__":
     # Parse receipt as before
