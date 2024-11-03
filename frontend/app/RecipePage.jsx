@@ -2,13 +2,14 @@ import { Text, View, StyleSheet, ScrollView, Button, Pressable} from "react-nati
 import {router} from 'expo-router'
 import { useFonts } from 'expo-font';
 import AppLoading from 'expo-app-loading';
+import axios from 'axios';
 import {useLocalSearchParams} from 'expo-router'
 import {
   SourceSerifPro_400Regular,
 } from '@expo-google-fonts/source-serif-pro'
 
 
-export default function RecipePage()
+export default function RecipePage(props)
 {
 	let [fontsLoaded] = useFonts({
 		SourceSerifPro_400Regular,
@@ -16,8 +17,9 @@ export default function RecipePage()
 	})
 
 
-    const params = useLocalSearchParams();
-    const {recipe_Name,ingredients, directions} = params;
+    const items = useLocalSearchParams();
+    const {recipe_name, ingredients_name, ingredients_quantity, directions} = items;
+	console.log(directions);
 		
 		if (!fontsLoaded)
 		{
@@ -30,15 +32,36 @@ export default function RecipePage()
 			<Text style = {style.backButton}>back</Text>
 			</Pressable>
 			<View style = {style.recipeName}>
-				<Text style = {style.recipeNameText}>{recipe_Name}</Text>
+				<Text style = {style.recipeNameText}>{recipe_name}</Text>
 			</View>
+			
 			<View style = {style.ingredients}>
-				<Text style = {style.ingredientsText}>{ingredients}</Text>
-			</View>
+				{
+					ingredients_name.map((ingredient,i)=>
+					{
+						return(
+						<Text style = {style.ingredientsText}>{ingredient}:     {ingredients_quantity[i]}</Text>
+						)
+					}
+				)}
+			</View>	
 			<View style = {style.directions}>
 				<Text style = {style.directionText}>{directions}</Text>
 			</View>
-			<Pressable style={style.buttonStyle} onPress={() => console.log("for backend")}>
+			<Pressable style={style.buttonStyle} onPress={() => 
+				{
+				axios({
+						url: "http://10.239.57.74:5000/save_recipe",
+						method: "post",
+						data: {
+						  "recipe_name": recipe_name,
+						  "ingredients_name" : ingredients_name,
+						  "ingredients_quantity" : ingredients_quantity,
+						  "directions" : directions
+					}
+				})
+			}
+			}>
             <Text style={style.buttonText}> Save Recipe </Text>
       </Pressable>
     </View>

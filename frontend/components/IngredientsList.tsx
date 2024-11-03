@@ -1,16 +1,27 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet, TextInput, ScrollView, Pressable, Image } from "react-native";
 import IngredientItem from "./IngredientItem";
 import { addIngredientToList } from "../constants/ingrUtil";
 import { LinearGradient } from "expo-linear-gradient";
 import CameraComponent from "./Camera";
+import axios from 'axios';
+import { useIsFocused } from "@react-navigation/native";
+
 
 export default function IngredientsList() {
-  const [ingredients, setIngredients] = useState([
-    { name: "Steak", amount: "1.0 lbs", expires: "Expires 10/2" },
-    { name: "Eggs", amount: "12", expires: "Expires 10/2" },
-    { name: "Milk", amount: "1 liter", expires: "Expires 10/5" },
-  ]);
+  const isFocused = useIsFocused();
+  useEffect(()=>
+    {
+      axios({
+      url: "http://10.239.57.74:5000/get_ingredients",
+      method:"get",
+    }).then(function(response){
+      setIngredients(response["data"])
+    });
+  },[isFocused]
+)
+   
+  const [ingredients, setIngredients] = useState([{"name":"test"}]);
   const [searchQuery, setSearchQuery] = useState("");
   const [capturedImage, setCapturedImage] = useState<string | null>(null);
 
@@ -19,11 +30,18 @@ export default function IngredientsList() {
     setIngredients((prevIngredients) => [...prevIngredients, newIngredient]);
   };
 
-  const deleteIngredient = (index: number) => {
+  const deleteIngredient = (index: number, name:string) => {
     setIngredients((prevIngredients) => prevIngredients.filter((_, i) => i !== index));
+    axios({
+      url: "http://10.239.57.74:5000/delete_ingredient",
+      method: "delete",
+      data: {
+        "ingredient": name
+      }
+    });
   };
 
-  const updateIngredient = (index: number, updatedItem: { name: string; amount: string; expires: string }) => {
+  const updateIngredient = (index: number, updatedItem: { name: string; quantity: string; expires: string }) => {
     const updatedIngredients = ingredients.map((item, i) => (i === index ? updatedItem : item));
     setIngredients(updatedIngredients);
   };
@@ -42,11 +60,11 @@ export default function IngredientsList() {
       />
 
       <ScrollView style={styles.ingredientsList}>
-        {filteredIngredients.map((item, index) => (
+        {filteredIngredients.map((item, index)  => (
           <IngredientItem
             key={index}
             item={item}
-            onDelete={() => deleteIngredient(index)}
+            onDelete={(name) => deleteIngredient(index,name)}
             onUpdate={(updatedItem) => updateIngredient(index, updatedItem)}
           />
         ))}

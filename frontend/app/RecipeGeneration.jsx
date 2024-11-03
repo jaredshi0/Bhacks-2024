@@ -3,14 +3,18 @@ import { useFonts } from 'expo-font';
 import AppLoading from 'expo-app-loading';
 import {Link} from 'expo-router'
 import BottomNavigation from "../components/BottomNav";
+import { useNavigation } from "@react-navigation/native";
+
 
 import {
   SourceSerifPro_400Regular,
 } from '@expo-google-fonts/source-serif-pro'
 import axios from "axios";
+import { useState } from "react";
 
 const userIP = "10.239.57.74"
 export default function RecipeGeneration() {
+  const nav = useNavigation();
 
   	let [fontsLoaded] = useFonts({
 		SourceSerifPro_400Regular,
@@ -19,8 +23,9 @@ export default function RecipeGeneration() {
 
 	});
   
-  
-  const testList = [{recipe_Name:'bacon egg and cheese', ingredients: "testing ingredients \ningredients 1 \ningredients 2 \ningredients 3", directions: ["dir test 1", "dir test 2"]},
+  const[listOfRecipe, setRecipe] = useState([]);
+
+  const testList = [{recipe_name:'bacon egg and cheese', ingredients: "testing ingredients \ningredients 1 \ningredients 2 \ningredients 3", directions: ["dir test 1", "dir test 2"]},
   {recipe_Name:'isaac  sucks', ingredients:'isaac sucks', directions: ['isaac sucks','issac sucks']},
   {recipe_Name:'bacon egg and cheese', ingredients: "testing ingredients \ningredients 1 \ningredients 2 \ningredients 3", directions: ["dir test 1", "dir test 2"]},
   {recipe_Name:'bacon egg and cheese', ingredients: "testing ingredients \ningredients 1 \ningredients 2 \ningredients 3", directions: ["dir test 1", "dir test 2"]}          
@@ -37,25 +42,44 @@ export default function RecipeGeneration() {
           <Text numberOfLines={2} style = {style.titleStyle}> Recipe{"\n"}Generation</Text>
         </View>
 
-          <Pressable style={style.buttonStyle} onPress={() => console.log("for backend")}>
+          <Pressable style={style.buttonStyle} onPress={() => {
+            axios(
+              {
+                url: "http://10.239.57.74:5000/generate_recipe",
+                method:"get",
+              }).then(function(response){
+                setRecipe(response["data"]),
+                console.log(response["data"][1]["ingredients"])
+              }
+            )
+          }}>
             <Text style={style.buttonText}> Click to Generate! </Text>
           </Pressable>
         <ScrollView style={{flex:1}}>
         <View style = {style.listStyle}>
         {
-          testList.map((item,i)=>
+          
+          listOfRecipe.map((item,i)=>
           {
             //finish onClick
-          return <Link asChild href={{ 
-            pathname: './RecipePage',
-            params: {recipe_Name:item.recipe_Name, ingredients:item.ingredients, directions:item.directions},
-          }}>
-          <Pressable style = {style.recipeList} key={i}> 
-            <Text style = {style.recipeTitle}>{item.recipe_Name} </Text>
-            <Text style = {style.recipeIngredients}>{item.ingredients}</Text>
-            <Text style = {style.firstDirection}>{item.directions}</Text>
+          return<Pressable style = {style.recipeList} key={i} onPress={()=>nav.navigate('RecipePage',{ 
+            recipe_name:item.recipe_name,
+            ingredients_name:item.ingredients.map(ingredient=>ingredient.name),
+            ingredients_quantity:item.ingredients.map(ingredient=>ingredient.quantity),
+            directions:item.directions
+            })}> 
+            <Text style = {style.recipeTitle}>{item.recipe_name} </Text>
+            <Text style = {style.recipeIngredients}>ingredients</Text> 
+            {
+              item.ingredients.map((items,i)=>
+              {
+                return(
+                <Text style = {style.recipeIngredients}>{items.name} {items.quantity}</Text> 
+                )     
+              })
+            }
+            <Text style = {style.firstDirection}>{item.directions[0]}</Text>
             </Pressable>
-            </Link>
           })
           }
         </View>
