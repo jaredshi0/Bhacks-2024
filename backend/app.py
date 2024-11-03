@@ -2,22 +2,21 @@ from .TextRec.ocr_component import OCR
 from flask import Flask, render_template, jsonify, request
 import cv2
 from .llm.receiptParser import parse_receipt
-from .llm.recipeGenerator import generate_recipe
 from .llm.recipeGeneratorMultiple import generate_recipe_multiple
 import base64
 import numpy as np
+from .database.mongodb import add_ingredient, remove_ingredient, search_ingredient, store_ingredients, Ingredient
 
 app = Flask(__name__)
 
 '''
 TO DO:
-- Process Image
-- Get Ingredients
-- Store Ingredients
-- Update Ingredients
-- Remove Ingredients
-- Generate Recipe
-- Save Recipes
+- Process Image: Done
+- Get Ingredients: In Progress
+- Add Ingredient: Done
+- Remove Ingredients: Done
+- Generate Recipe: Not Started
+- Save Recipes: Not Started
 '''
 
 @app.route('/store_ingredients', methods=['POST'])
@@ -55,25 +54,10 @@ def store_ingredients():
     # Pass OCR string back to the LLM to process
     ingredients = parse_receipt(ocr_String)
 
-    return jsonify(ingredients)
+    for ingredient in ingredients:
+        add_ingredient(ingredient)
 
-@app.route('/generate_recipe', methods=['GET'])
-def generate_recipe():
-    '''
-    High Level:
-    - Get the ingredients from the request or from DB
-    - Pass the ingredients to the LLM
-    - Get the recipes
-    - Return the recipes
-    '''
-
-    # Get ingredients from request
-    ingredients = request.json['ingredients']
-
-    # Pass the ingredients to the LLM
-    recipes = generate_recipe(ingredients)
-
-    return jsonify(recipes)
+    return 200
 
 @app.route('/generate_recipe_multiple', methods=['GET'])
 def generate_recipe_multiple():
@@ -92,3 +76,50 @@ def generate_recipe_multiple():
     recipes = generate_recipe_multiple(ingredients)
 
     return jsonify(recipes)
+
+@app.route('/new_ingredient', methods=['PUT'])
+def new_ingredient():
+    '''
+    High Level:
+    - Get the ingredient from the request
+    - Add the ingredient to the DB
+    - Return the ingredient
+    '''
+
+    data = request.get_json()
+
+    ingredient_name = data['ingredient']
+
+    if ingredient_name == None:
+        return 400 # Missing ingredient name
+
+    new_ingredient = Ingredient(name = ingredient_name)
+
+    add_ingredient(new_ingredient)
+
+    return 200
+
+@app.route('/remove_ingredient', methods=['DELETE'])
+def remove_ingredient():
+    data = request.get_json()
+
+    ingredient_name = data['ingredient']
+
+    if ingredient_name == None:
+        return 400 # Missing ingredient name
+
+    remove_ingredient(ingredient_name)
+
+    return 200
+
+@app.route('/get_ingredients', methods=['GET'])
+def get_ingredients():
+    '''
+    High Level:
+    - Get all ingredients from the DB
+    - Return the ingredients
+    '''
+
+    ingredients = ingredients_collection.find()
+
+    return jsonify(ingredients)
