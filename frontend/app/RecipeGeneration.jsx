@@ -84,9 +84,8 @@ const style = StyleSheet.create({
   },
   titleStyle: {
     fontSize: 36,
-    fontWeight: '400',
-    fontFamily: 'SourceSerifPro_400Regular',
-    color: "#FFF", // Make text white for contrast
+    fontWeight: 'bold',
+    color: "#FFF", 
     textAlign: "center"
   },
   buttonStyle: {
