@@ -32,8 +32,8 @@ TO DO:
 - Save Recipes: Not Started
 '''
 
-@app.route('/store_ingredients', methods=['POST'])
-def store_ingredients():
+@app.route('/photo_ingredients', methods=['POST'])
+def photo_ingredients():
     '''
     High Level: 
     - Get the image from the request
@@ -67,8 +67,7 @@ def store_ingredients():
     # Pass OCR string back to the LLM to process
     ingredients = parse_receipt(ocr_String)
 
-    for ingredient in ingredients:
-        add_ingredient(ingredient)
+    store_ingredients(ingredients)
 
     return success_response
 
@@ -90,8 +89,8 @@ def generate_multiple():
 
     return jsonify(recipes)
 
-@app.route('/new_ingredient', methods=['POST'])
-def new_ingredient():
+@app.route('/manual_ingredient', methods=['POST'])
+def manual_ingredient():
     '''
     High Level:
     - Get the ingredient from the request
