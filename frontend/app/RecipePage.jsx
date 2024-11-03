@@ -10,7 +10,7 @@ import {
 	SourceSerifPro_400Regular,
   } from '@expo-google-fonts/source-serif-pro'
 
-const API_KEY = "sk-proj-e1NXvcwm153YKdfIrJbcT3BlbkFJA3caADCdzN0qGKXwXvF7"; // Replace with your actual API key
+const API_KEY = "API-KEY"; // Replace with your actual API key
 
 export default function RecipePage() {
   const router = useRouter(); // Initialize router for navigation
