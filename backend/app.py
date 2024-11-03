@@ -160,12 +160,23 @@ def generate_recipe():
 
     output = []
 
-    for recipe in recipes:
+    for index, recipe in enumerate(recipes):
         output.append({
             "recipe_name": recipe.recipe_name,
-            "ingredients": recipe.ingredients,
+            "ingredients": [],
             "directions": recipe.directions
         })
+
+        for ingredient in recipe.ingredients:
+            output[index][ingredient].append({
+                json.dumps(
+                    {
+                        "name": ingredient.name,
+                        "quantity": ingredient.quantity
+                    }
+                )
+            })
+
     print(output)
 
     return jsonify(output)
