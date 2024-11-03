@@ -44,6 +44,7 @@ def store_ingredients(ingredients: List[Ingredient]):
         add_ingredient(ingredient)
 
 def all_ingredients():
+    # return all the ingredients in the database in this format {{name: "name", quantity: "quantity"}, ...}
     return ingredients_collection.find()
 
 # Use existing functions

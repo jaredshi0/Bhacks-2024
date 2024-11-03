@@ -72,7 +72,7 @@ def photo_ingredients():
     return success_response
 
 @app.route('/generate_multiple_recipe', methods=['GET'])
-def generate_multiple():
+def generate_multiple_recipe():
     '''
     High Level:
     - Get the ingredients from the request or from DB
@@ -142,7 +142,15 @@ def get_ingredients():
     - Return the ingredients
     '''
     ingredients = all_ingredients()
-    return jsonify(ingredients)
+    
+    output = []
+    for ingredient in ingredients:
+        output.append({
+            "name": ingredient['name'],
+            "quantity": ingredient['quantity']
+        })
+    
+    return jsonify(output)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
