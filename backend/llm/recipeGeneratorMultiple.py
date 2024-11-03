@@ -7,8 +7,7 @@ from pydantic import BaseModel
 # Data model for LLM to generate
 class Ingredient(BaseModel):
     name: str
-    quantity: float
-    quantity_unit: Optional[str]
+    quantity: str
 
 class Recipe(BaseModel):
     recipe_name: str
@@ -54,7 +53,7 @@ def print_recipe(recipe: Recipe):
     print("\nIngredients:")
     for ingredient in recipe.ingredients:
         print(
-            f"- {ingredient.name}: {ingredient.quantity} {ingredient.quantity_unit or ''}"
+            f"- {ingredient.name}: {ingredient.quantity}"
         )
     print("\nDirections:")
     for step, direction in enumerate(recipe.directions, start=1):
@@ -63,7 +62,7 @@ def print_recipe(recipe: Recipe):
 
 if __name__ == "__main__":
     # Example usage
-    ingredients = [{"name": "chicken"}, {"name": "rice"}, {"name": "broccoli"}]
+    ingredients = [{"name": "chicken", "quantity": "1.5 kg"}, {"name": "potato"}]
 
     recipes = generate_multiple_recipes(ingredients)
     for recipe in recipes:

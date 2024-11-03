@@ -11,8 +11,7 @@ ingredients_collection = db["ingredients"]  # Collection name
 # Define Ingredient schema
 class Ingredient(BaseModel):
     name: str
-    quantity: Optional[float]
-    quantity_unit: Optional[str]
+    quantity: Optional[str]
 
 # Define functions for MongoDB operations
 
@@ -44,6 +43,9 @@ def store_ingredients(ingredients: List[Ingredient]):
     for ingredient in ingredients:
         add_ingredient(ingredient)
 
+def all_ingredients():
+    return ingredients_collection.find()
+
 # Use existing functions
 if __name__ == "__main__":
     # Parse receipt as before
@@ -54,6 +56,6 @@ if __name__ == "__main__":
     store_ingredients(ingredients_list.list)
     
     # Example usage
-    add_ingredient(Ingredient(name="Banana", quantity=0.442, quantity_unit="kg"))
+    add_ingredient(Ingredient(name="Banana", quantity="0.442 kg"))
     remove_ingredient("Banana")
     search_ingredient("potato")

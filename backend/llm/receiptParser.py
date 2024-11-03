@@ -11,8 +11,7 @@ from pydantic import BaseModel
 
 class Ingredient(BaseModel):
     name: str
-    quantity: Optional[float]
-    quantity_unit: Optional[str]
+    quantity: Optional[str]
 
 class IngredientList(BaseModel):
     list: List[Ingredient]
@@ -49,8 +48,8 @@ def print_ingredients(ingredients: IngredientList):
     for ingredient in ingredients.list:
 
         # only print ingredient quantity and unit if they exist
-        if ingredient.quantity and ingredient.quantity_unit:
-            print(f"{ingredient.name}: {ingredient.quantity} {ingredient.quantity_unit}")
+        if ingredient.quantity:
+            print(f"{ingredient.name}: {ingredient.quantity}")
         else:
             print(ingredient.name)
         
