@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { View, Text, StyleSheet, TextInput, ScrollView, Pressable, Image } from "react-native";
 import IngredientItem from "./IngredientItem";
 import { addIngredientToList } from "../constants/ingrUtil";
+import { Entypo } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import CameraComponent from "./Camera";
 
@@ -17,6 +18,10 @@ export default function IngredientsList() {
   const addIngredient = () => {
     const newIngredient = addIngredientToList("New Ingredient", "1 unit", "Expires 10/5");
     setIngredients((prevIngredients) => [...prevIngredients, newIngredient]);
+  };
+
+  const handleCapture = (uri: string) => {
+    setCapturedImage(uri);
   };
 
   const deleteIngredient = (index: number) => {
@@ -37,6 +42,7 @@ export default function IngredientsList() {
       <TextInput
         style={styles.searchBar}
         placeholder="Search for an Ingredient"
+        placeholderTextColor="#8A8A8A" // Set a visible placeholder color
         value={searchQuery}
         onChangeText={setSearchQuery}
       />
@@ -52,9 +58,7 @@ export default function IngredientsList() {
         ))}
       </ScrollView>
 
-      {capturedImage && (
-        <Image source={{ uri: capturedImage }} style={styles.capturedImage} />
-      )}
+      {capturedImage && <Image source={{ uri: capturedImage }} style={styles.capturedImage} />}
 
       <View style={styles.bottomButtons}>
         <LinearGradient
@@ -67,8 +71,7 @@ export default function IngredientsList() {
             <Text style={styles.addButtonText}>Click to add an Ingredient</Text>
           </Pressable>
         </LinearGradient>
-        
-        <CameraComponent onCapture={(uri) => setCapturedImage(uri)} />
+        <CameraComponent onCapture={handleCapture} />
       </View>
     </View>
   );
@@ -86,6 +89,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     backgroundColor: "#e9e9e9",
     color: "#000",
+    fontSize: 16, // Make the text a bit larger for visibility
   },
   ingredientsList: {
     flex: 1,
