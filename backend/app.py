@@ -7,6 +7,7 @@ import base64
 import numpy as np
 from .database.mongodb import add_ingredient, remove_ingredient, search_ingredient, store_ingredients, Ingredient, all_ingredients, exists
 from typing import List, Optional
+import json
 
 app = Flask(__name__)
 
