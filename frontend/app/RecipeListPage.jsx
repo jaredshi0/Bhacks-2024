@@ -1,63 +1,58 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet, TextInput, ScrollView, Pressable } from "react-native";
-import { useFonts } from 'expo-font';
-import AppLoading from 'expo-app-loading';
+import { LinearGradient } from "expo-linear-gradient";
 import { Link } from 'expo-router';
+import axios from 'axios';
 import BottomNavigation from "../components/BottomNav";
-import { useNavigation } from "@react-navigation/native";
-import { LinearGradient } from 'expo-linear-gradient';
-import {
-  SourceSerifPro_400Regular,
-} from '@expo-google-fonts/source-serif-pro'
-import axios from "axios";
+import { useNavigation , useIsFocused} from "@react-navigation/native";
 
-export default function RecipeGeneration() {
+export default function RecipeListPage() {
   const nav = useNavigation();
-
-  	let [fontsLoaded] = useFonts({
-		SourceSerifPro_400Regular,
-    'InstrumentSans': require('../assets/fonts/InstrumentSans.ttf'),
-    'InstrumentSans-italics': require('../assets/fonts/InstrumentSans-Italic.ttf'),
-  });
-
   const [searchQuery, setSearchQuery] = useState("");
-  const[listOfRecipe, setRecipe] = useState([]);
+  const[listOfRecipe, setRecipe] = useState([{'recipe_name': 'hi',ingredients: [{"name": "Cheese", "quantity": "1 cup shredded"}, {"name": "Potato", "quantity": "2 medium, diced"}, {"name": "Egg", "quantity": "6 large"}, {"name": "Ham", "quantity": "4 slices, diced"}]}]);
 
   // Filter recipes based on search query
   const filteredRecipes = listOfRecipe.filter(recipe =>
     recipe.recipe_name.toLowerCase().includes(searchQuery.toLowerCase())
   );
+  const isFocused = useIsFocused();
+  useEffect(()=>
+    {
+      axios({
+      url: "http://10.239.57.74:5000/get_recipes",
+      method:"get",
+    }).then(function(response){
+      setRecipe(response["data"])
+      console.log(response["data"][0]['ingredients'])
+    });
+  },[isFocused]
+)
 
-    return( 
-        <View style={style.pageTemp}>
-        {/* Gradient Header */}
-        <LinearGradient asChild
-          colors={["#2E7D32", "#A5D6A7"]}
-          style={style.headerContainer}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
-        >
-          <Text style={style.headerText}>Recipe Generation</Text>
-        </LinearGradient>
-  
-          <Pressable style={style.buttonStyle} onPress={() => {
-            axios(
-              {
-                url: "http://10.239.57.74:5000/generate_recipe",
-                method:"get",
-              }).then(function(response){
-                setRecipe(response["data"]),
-                console.log("hi")
-              }
-            )
-          }}>
-            <Text style={style.buttonText}> Click to Generate! </Text>
-          </Pressable>
-        <ScrollView style={{flex:1}}>
+  return (
+    <View style={style.container}>
+      {/* Gradient Header */}
+      <LinearGradient
+        colors={["#2E7D32", "#A5D6A7"]}
+        style={style.headerContainer}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+      >
+        <Text style={style.headerText}>Your Recipes</Text>
+      </LinearGradient>
+
+      {/* Search Bar */}
+      <Text style={style.searchLabel}>Search for a Recipe:</Text>
+      <TextInput
+        style={style.searchBar}
+        placeholder="e.g Bacon Egg and Cheese"
+        placeholderTextColor="#8A8A8A"
+        value={searchQuery}
+        onChangeText={setSearchQuery}
+      />
+      <ScrollView style={{flex:1}}>
         <View style = {style.listStyle}>
-        {
-          
-          filteredRecipes.map((item,i)=>
+        {   
+          listOfRecipe.map((item,i)=>
           {
             //finish onClick
           return<Pressable style = {style.recipeList} key={i} onPress={()=>nav.navigate('RecipePage',{ 
@@ -76,66 +71,66 @@ export default function RecipeGeneration() {
                 )     
               })
             }
-            <Text style = {style.firstDirection}>{item.directions[0]}</Text>
+            {/* <Text style = {style.firstDirection}>{item.directions}</Text> */}
             </Pressable>
           })
           }
-        </View>
-        </ScrollView>
-
-        <BottomNavigation />
       </View>
-    );
+      </ScrollView>
+      <BottomNavigation />
+    </View>
+  );
 }
 
-
 const style = StyleSheet.create({
-
-
-  pageTemp: 
-  {
-    backgroundColor: "#FFFFFF",
-    flex:1
-  },
-  topHeader:
-  {
-    flex:.38,
-    height: 200,
-    backgroundColor: '#5db075',
-    alignItems : 'center',
-    justifyContent: 'center',
-  },
-  buttonStyle:
-  {
-    flex : 1,
-    width: '80%',
-    height: '5%',
-    backgroundColor: '#3a405a',
-    alignSelf: 'center',
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: 10,
-    position: 'absolute',
-    top: '17%'
-    
-  },
-  titleStyle:
-  {
-    fontSize: 36,
-    fontWeight: '400',
-    fontFamily: 'SourceSerifPro_400Regular'
-  },
-
-  buttonText:
-  {
-    flex : 0,
-    color: '#FFFFFF',
-    fontFamily: 'InstrumentSans-Italics'
-  },
-
   container: {
     flex: 1,
     backgroundColor: "#FFFFFF",
+  },
+  headerContainer: {
+    width: "100%",
+    height: 150,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  headerText: {
+    fontSize: 32,
+    color: "#FFF",
+    fontWeight: "bold",
+  },
+  searchLabel: {
+    fontSize: 16,
+    fontWeight: "bold",
+    paddingHorizontal: 20,
+    paddingTop: 10,
+  },
+  searchBar: {
+    height: 40,
+    marginVertical: 10,
+    marginHorizontal: 20,
+    borderRadius: 10,
+    paddingHorizontal: 10,
+    backgroundColor: "#e9e9e9",
+    color: "#000",
+  },
+  recipeItem: {
+    backgroundColor: "#f2f2f2",
+    borderRadius: 10,
+    padding: 15,
+    marginBottom: 15,
+  },
+  recipeTitle: {
+    fontSize: 20,
+    fontWeight: "bold",
+    marginBottom: 5,
+  },
+  recipeDescription: {
+    fontSize: 14,
+    marginBottom: 10,
+  },
+  recipePrepTime: {
+    fontSize: 14,
+    fontWeight: "600",
   },
   headerContainer: {
     width: "100%",
@@ -148,10 +143,6 @@ const style = StyleSheet.create({
     fontSize: 32,
     color: "#FFF",
     fontWeight: "bold",
-  },
-  recipeList: {
-    flex: 1,
-    marginHorizontal: 20,
   },
   recipeItem: {
     backgroundColor: "#f2f2f2",
@@ -208,4 +199,5 @@ const style = StyleSheet.create({
     fontWeight:'600',
     fontFamily: 'InstrumentSans'
   }
+
 });

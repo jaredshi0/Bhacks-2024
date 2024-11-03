@@ -17,7 +17,7 @@ export default function Header() {
 
 const styles = StyleSheet.create({
   header: {
-    height: 10,
+    height: 150,
     alignItems: "center",
     justifyContent: "center",
   },

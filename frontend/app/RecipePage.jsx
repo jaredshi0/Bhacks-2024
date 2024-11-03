@@ -186,4 +186,22 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginTop: 10,
   },
+  buttonStyle:
+  {
+	  flex:0,
+	  backgroundColor: '#5db075',
+	  width: '80%',
+	  alignItems:'center',
+	  justifyContent: 'center',
+	  height: 40,
+	  borderRadius: 10,
+	  alignSelf:'center'
+  },
+  buttonText:
+  {
+	  fontFamily:'InstrumentSans',
+	  fontSize:16,
+	  color: '#FFFFFF',
+	  fontWeight:'700',
+  }
 });
