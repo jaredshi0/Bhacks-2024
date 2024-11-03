@@ -4,8 +4,8 @@ import IngredientItem from "./IngredientItem";
 import { addIngredientToList } from "../constants/ingrUtil";
 import { Entypo } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
-import axios from 'axios';
 import CameraComponent from "./Camera";
+import axios from 'axios';
 
 export default function IngredientsList() {
   const [ingredients, setIngredients] = useState([
@@ -22,11 +22,23 @@ export default function IngredientsList() {
   };
 
   const handleCapture = async (uri: string) => {
+    
     setCapturedImage(uri);
+// Create a FormData object and append the image file data 
 
-    const formData = new FormData(); formData.append('image', uri);
-    const response = await axios.post('http://localhost:5000/upload', formData, { headers: { 'Content-Type': 'multipart/form-data', }, });
+  const formData = new FormData();
+  formData.append('image', {
+    uri, // URI of the captured image on the local device
+  type: 'image/jpeg', // Set the MIME type of the file 
+  name: 'captured_image.jpg' }); // Send the form data to the Flask server running on a different device 
 
+
+  const response = await axios.post('http://10.239.57.74:5000/photo_ingredients', formData, { 
+  headers: {
+   'Content-Type': 'multipart/form-data'
+   } 
+  });
+  
   };
 
   const deleteIngredient = (index: number) => {
