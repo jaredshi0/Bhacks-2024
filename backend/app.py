@@ -5,7 +5,7 @@ from .llm.receiptParser import parse_receipt
 from .llm.recipeGeneratorMultiple import generate_multiple_recipes
 import base64
 import numpy as np
-from .database.mongodb import add_ingredient, remove_ingredient, search_ingredient, store_ingredients, Ingredient, all_ingredients, exists
+from .database.mongodb import add_ingredient, remove_ingredient, search_ingredient, store_ingredients, Ingredient, all_ingredients
 from typing import List, Optional
 import json
 
@@ -109,7 +109,7 @@ def new_ingredient():
         return missing_info_response
     
     # Check if an element with ingredient_name already exists
-    if exists(ingredient_name) != None:
+    if search_ingredient(ingredient_name) != None:
         # Remove it 
         remove_ingredient(ingredient_name)
 
@@ -122,8 +122,8 @@ def new_ingredient():
 
     return success_response
 
-@app.route('/remove_ingredient', methods=['DELETE'])
-def remove_ingredient():
+@app.route('/delete_ingredient', methods=['DELETE'])
+def delete_ingredient():
     data = request.get_json()
 
     ingredient_name = data['ingredient']
