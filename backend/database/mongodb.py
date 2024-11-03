@@ -2,11 +2,13 @@ from pymongo import MongoClient
 from typing import List, Optional
 from pydantic import BaseModel
 from backend.llm.receiptParser import parse_receipt
+from backend.llm.recipeGeneratorMultiple import Recipe
 
 # MongoDB setup
 client = MongoClient("mongodb://localhost:27017/")  # Replace with your MongoDB URI
 db = client["ingredient_database"]  # Database name
 ingredients_collection = db["ingredients"]  # Collection name
+recipies_collection = db["recipies"]  # Collection name
 
 # Define Ingredient schema
 class Ingredient(BaseModel):
@@ -46,6 +48,19 @@ def store_ingredients(ingredients: List[Ingredient]):
 def all_ingredients():
     # return all the ingredients in the database in this format {{name: "name", quantity: "quantity"}, ...}
     return ingredients_collection.find()
+
+# Add a Recipe
+def add_recipe(recipe: Recipe):
+    recipies_collection.insert_one(recipe.dict())
+    print(f"Added {recipe.recipe_name} to the database.")
+
+# Remove a Recipe by name
+def remove_recipe(name: str):
+    result = recipies_collection.delete_one({"recipe_name": name})
+    if result.deleted_count > 0:
+        print(f"Removed {name} from the database.")
+    else:
+        print(f"{name} not found in the database.")
 
 # Use existing functions
 if __name__ == "__main__":
