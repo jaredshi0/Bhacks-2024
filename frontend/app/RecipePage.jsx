@@ -23,7 +23,6 @@ export default function RecipePage() {
   } else {
     return (
       <View style={style.pageStyle}>
-        {/* Full-Width Gradient Header */}
         <LinearGradient
           colors={["#2E7D32", "#A5D6A7"]}
           style={style.headerContainer}
@@ -44,9 +43,18 @@ export default function RecipePage() {
         <View style={style.directions}>
           <Text style={style.directionText}>{directions}</Text>
         </View>
-        <Pressable style={style.buttonStyle} onPress={() => console.log("for backend")}>
-          <Text style={style.buttonText}> Save Recipe </Text>
-        </Pressable>
+
+        {/* Gradient Save Recipe Button */}
+        <LinearGradient
+          colors={["#2E7D32", "#A5D6A7"]}
+          style={style.gradientButton}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+        >
+          <Pressable style={style.buttonContent} onPress={() => console.log("for backend")}>
+            <Text style={style.buttonText}> Save Recipe </Text>
+          </Pressable>
+        </LinearGradient>
       </View>
     );
   }
@@ -73,7 +81,6 @@ const style = StyleSheet.create({
   recipeNameText: {
     fontSize: 36,
     color: "#FFF", // White text color for contrast
-    fontFamily: 'SourceSerifPro_400Regular',
     textAlign: 'center',
     fontWeight: '400',
     marginTop: 10, // Move text further down if needed
@@ -96,12 +103,19 @@ const style = StyleSheet.create({
     fontFamily: 'InstrumentSans',
     fontWeight: '600',
   },
-  buttonStyle: {
-    backgroundColor: '#5db075',
+  gradientButton: {
     width: '80%',
+    height: 40,
+    borderRadius: 10,
     alignItems: 'center',
     justifyContent: 'center',
-    height: 40,
+    marginVertical: 20,
+  },
+  buttonContent: {
+    width: '100%',
+    height: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
     borderRadius: 10,
   },
   buttonText: {

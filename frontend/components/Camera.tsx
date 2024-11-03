@@ -30,7 +30,7 @@ const CameraComponent: React.FC<Props> = ({ onCapture }) => {
   return (
     <View style={styles.container}>
       <Pressable onPress={takePicture}>
-        <Entypo name="camera" size={24} color="black" />
+        <Entypo name="camera" size={30} color="black" />
       </Pressable>
     </View>
   );

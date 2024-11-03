@@ -11,20 +11,20 @@ export default function BottomNavigation() {
   const activeRoute = segments.length === 0 ? "index" : segments[0]; 
 
   // Function to navigate to specific routes
-  const navigate = (route: "/" | "/RecipeGeneration" | "/RecipePage") => {
+  const navigate = (route: "/" | "/RecipeGeneration" | "/RecipeListPage") => {
     router.push(route);
   };
 
   return (
     <View style={styles.bottomNav}>
       <Pressable onPress={() => navigate("/")}>
-        <Entypo name="home" size={24} color={activeRoute === "index" ? "#5db075" : "#3a405a"} />
+        <Entypo name="home" size={35} color={activeRoute === "index" ? "#5db075" : "#3a405a"} />
       </Pressable>
       <Pressable onPress={() => navigate("/RecipeGeneration")}>
-        <Entypo name="bowl" size={24} color={activeRoute === "RecipeGeneration" ? "#5db075" : "#3a405a"} />
+        <Entypo name="bowl" size={35} color={activeRoute === "RecipeGeneration" ? "#5db075" : "#3a405a"} />
       </Pressable>
-      <Pressable onPress={() => navigate("/")}>
-        <Entypo name="list" size={24} color={activeRoute === "RecipePage" ? "#5db075" : "#3a405a"} />
+      <Pressable onPress={() => navigate("/RecipeListPage")}>
+        <Entypo name="list" size={35} color={activeRoute === "RecipeListPage" ? "#5db075" : "#3a405a"} />
       </Pressable>
     </View>
   );

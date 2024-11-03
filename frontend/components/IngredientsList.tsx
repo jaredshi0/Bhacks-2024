@@ -89,7 +89,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     backgroundColor: "#e9e9e9",
     color: "#000",
-    fontSize: 16, // Make the text a bit larger for visibility
+    fontSize: 16, 
   },
   ingredientsList: {
     flex: 1,
