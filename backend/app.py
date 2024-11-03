@@ -2,7 +2,7 @@ from .TextRec.ocr_component import OCR
 from flask import Flask, render_template, jsonify, request
 import cv2
 from .llm.receiptParser import parse_receipt
-from .llm.recipeGeneratorMultiple import generate_recipe_multiple
+from .llm.recipeGeneratorMultiple import generate_multiple_recipes
 import base64
 import numpy as np
 from .database.mongodb import add_ingredient, remove_ingredient, search_ingredient, store_ingredients, Ingredient
@@ -15,6 +15,7 @@ TO DO:
 - Get Ingredients: In Progress
 - Add Ingredient: Done
 - Remove Ingredients: Done
+- Update Ingredient: Not Started
 - Generate Recipe: Not Started
 - Save Recipes: Not Started
 '''
@@ -89,11 +90,15 @@ def new_ingredient():
     data = request.get_json()
 
     ingredient_name = data['ingredient']
+    ingredient_quantity = data['quantity']
 
     if ingredient_name == None:
         return 400 # Missing ingredient name
 
     new_ingredient = Ingredient(name = ingredient_name)
+
+    if ingredient_quantity != None:
+        new_ingredient.quantity = ingredient_quantity
 
     add_ingredient(new_ingredient)
 
@@ -119,7 +124,17 @@ def get_ingredients():
     - Get all ingredients from the DB
     - Return the ingredients
     '''
+    ...
 
-    ingredients = ingredients_collection.find()
+@app.route('/update_ingredient', methods=['POST'])
+def update_ingredient():
+    '''
+    High Level:
+    - Get the ingredient from the request
+    - Update the ingredient in the DB
+    - Return the ingredient
+    '''
+    ...
 
-    return jsonify(ingredients)
+if __name__ == '__main__':
+    app.run(debug=True)
