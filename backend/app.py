@@ -44,24 +44,15 @@ def photo_ingredients():
     - Have LLM Process the text
     - Return list of ingredients
     '''
-    data = request.get_json()
+    if 'image' not in request.files:
+        print("Missing Image")
+        return missing_info_response
+    
+    print("Image Found")
+    image_file = request.files['image']
 
-    uri = data['image']
-
-    # Convert the base64 string to an image
-    if uri.startswith('data:image/png;base64,'):
-        uri = uri.replace('data:image/png;base64,', '')
-
-    image_data = base64.b64decode(uri)
-
-    # Convert the byte data to a NumPy array
-    np_array = np.frombuffer(image_data, np.uint8)
-
-    # Decode the image to an OpenCV format
-    image = cv2.imdecode(np_array, cv2.IMREAD_COLOR)
-
-    cv2.imshow('image', image)
-    cv2.waitKey(0)
+    file_bytes = np.frombuffer(image_file.read(), np.uint8)
+    image = cv2.imdecode(file_bytes, cv2.IMREAD_COLOR)
 
     # Pass the image to the OCR function
     ocr_String = OCR(image)

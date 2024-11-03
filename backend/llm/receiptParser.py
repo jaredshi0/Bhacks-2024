@@ -54,63 +54,58 @@ def print_ingredients(ingredients: IngredientList):
             print(ingredient.name)
         
 if __name__ == "__main__":
-    receipt_scanned = '''DATE 06/01/2016
+    receipt_scanned = '''
+    t Packarrds Corner © 617-991-9822
+    Boston Parte SOMMONWEALTH AVE
 
-    eeerrreererersrrervsrrrerrrrrrrr rrr yry
+    860 COM
+    Boston Massachusetts 02215-1205
 
-    LUCHINNI GREEN
-    0.778kq NET @ $5.99/kg
-    BANANA CAVENDISH
-    0.442kq NET @ $2.99/kg
-    SPECTAL
-    SPECIAL
-    POTATOES BRUSHED
-    1.328kgq NET @ $2.99/kg
-    BROCCOLI
-    0.808kq NET @ $5.99/kg
-    BRUSSEL SPROUTS
-    0.322kqg NET @ $15.99/kq
-    SPECIAL
-    GRAPES GREEN
-    1.174kg NET @ $5.99/kg
-    PEAS SNOW
-    0.218kq NET @ $14.99/kq
-    TOMATOES GRAPE
-    LETTUCE ICEBERG
-    SUBTOTAL
-    LOYALTY
-    SUBTOTAL
-    SUBTOTAL
+    40/26/2024 11:40 AM
 
-    SUBTOTAL
-    TOTAL
-    CASH
-    CHANGE
+    vUIALAALAUARD A ARTE
 
-    $4.66
-    $1.32
+    HEALTH AND BEAUTY
+    094030295 ABREVA T + $24.49
+    SUBTOTAL $24.49
+    T = MA TAX 6.25000 on $24.49 $1.53
+    TOTAL $26.02
+    «3222 VISA CHARGE $26.02
+    AID: 0000000031010
+    VISA CREDIT
+    AUTH CODE: 01145C
 
-    $0.99
-    $1.50
-    $3.97
+    WHEN YOU RETURN ANY ITEM, YOUR
+    RETURN CREDIT WILL NOT INCLUDE ANY
+    PROMOTIGNAL DISCGUNT OR COUPON
+    APPLIED [0 THE ORIGINAL ORDER.
 
-    $4.84
-    $5.15
+    SAVING WITH ARGET CIRCLE GOT EASIERt
+    Open the Target App or visit
+    target.con/circle to seo your savings
+    and tind more benefits!
 
-    $0.99
-    $7.03
+    + INDICATES HEALTH ITEM
+    HEALTH ITEM TOTAL: 26.02
 
-    $3.27
+    RECH2~-43300-3226-0172-0282-9
 
-    $2.99
-    $2.49
-    $39.20
-    -15.00
-    $24.20
-    $24.20
-    
-    LUCHINNI GREEN
-    0.778kq NET @ $5.99/kg'''
+    ee
+    ewe weer er eee
+
+    Beef 1 lb 
+    Broc 2 sb
+
+    Help make your Terget Run better
+    Take a 2 minute survey about today's trip
+
+    informtarget .com
+    User Ii): 7569 9677 4982
+    Password: 797 171
+
+    CUENTENOS EN ESPANOL
+
+    Please take this survey within 7 days'''
 
     ingredients = parse_receipt(receipt_scanned)
     print_ingredients(ingredients)
