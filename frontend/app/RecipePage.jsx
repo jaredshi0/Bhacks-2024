@@ -1,18 +1,28 @@
 import React, { useEffect, useState } from "react";
 import { Text, View, StyleSheet, Image, ActivityIndicator, Pressable } from "react-native";
-import { useLocalSearchParams, useRouter } from 'expo-router';
+import { useLocalSearchParams, useRouter, router } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Entypo } from '@expo/vector-icons';
 import axios from 'axios';
+import { useFonts } from 'expo-font';
+import AppLoading from 'expo-app-loading';
+import {
+	SourceSerifPro_400Regular,
+  } from '@expo-google-fonts/source-serif-pro'
 
 const API_KEY = "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"; // Replace with your actual API key
 
 export default function RecipePage() {
   const router = useRouter(); // Initialize router for navigation
-  const { recipe_Name, ingredients, directions } = useLocalSearchParams();
   const [imageUrl, setImageUrl] = useState(null);
   const [loading, setLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState(null);
+  const items = useLocalSearchParams();
+  const {recipe_name, ingredients_name, ingredients_quantity, directions} = items;
+  let [fontsLoaded] = useFonts({
+	SourceSerifPro_400Regular,
+	'InstrumentSans': require('../assets/fonts/InstrumentSans.ttf'),
+})
 
   useEffect(() => {
     const generateRecipeImage = async () => {
@@ -24,7 +34,7 @@ export default function RecipePage() {
           'https://api.openai.com/v1/images/generations',
           {
             model: "dall-e-3",
-            prompt: `A high-quality food photograph of a well-presented dish of ${recipe_Name}. Bright colors, appetizing look, professional lighting.`,
+            prompt: `A high-quality food photograph of a well-presented dish of ${recipe_name}. Bright colors, appetizing look, professional lighting.`,
             n: 1,
             size: "1024x1024",
           },
@@ -52,18 +62,18 @@ export default function RecipePage() {
     };
 
     generateRecipeImage();
-  }, [recipe_Name]);
+  }, [recipe_name]);
 
   return (
     <View style={styles.container}>
-      <LinearGradient
+      <LinearGradient asChild
         colors={["#2E7D32", "#A5D6A7"]}
         style={styles.headerContainer}
       >
         <Pressable style={styles.backButtonContainer} onPress={() => router.back()}>
           <Entypo name="chevron-left" size={24} color="#FFF" />
         </Pressable>
-        <Text style={styles.recipeNameText}>{recipe_Name}</Text>
+        <Text style={styles.recipeNameText}>{recipe_name}</Text>
       </LinearGradient>
 
       {/* Display Generated Image at the Top */}
@@ -75,19 +85,44 @@ export default function RecipePage() {
         <Text style={styles.errorText}>{errorMessage}</Text>
       )}
 
-      {/* Display Ingredients */}
-      <View style={styles.ingredients}>
-        <Text style={styles.sectionTitle}>Ingredients</Text>
-        <Text style={styles.ingredientsText}>{ingredients}</Text>
-      </View>
+<View style = {styles.pageStyle}>
 
-      {/* Display Directions */}
-      <View style={styles.directions}>
-        <Text style={styles.sectionTitle}>Directions</Text>
-        <Text style={styles.directionText}>{directions}</Text>
-      </View>
-    </View>
-  );
+<View style = {styles.recipeName}>
+	<Text style = {styles.recipeNameText}>{recipe_name}</Text>
+</View>
+
+<View style = {styles.ingredients}>
+	{
+		ingredients_name.map((ingredient,i)=>
+		{
+			return(
+			<Text style = {styles.ingredientsText}>{ingredient}:     {ingredients_quantity[i]}</Text>
+			)
+		}
+	)}
+</View>	
+<View style = {styles.directions}>
+	<Text style = {styles.directionText}>{directions}</Text>
+</View>
+<Pressable style={styles.buttonStyle} onPress={() => 
+	{
+	axios({
+			url: "http://10.239.57.74:5000/save_recipe",
+			method: "post",
+			data: {
+			  "recipe_name": recipe_name,
+			  "ingredients_name" : ingredients_name,
+			  "ingredients_quantity" : ingredients_quantity,
+			  "directions" : directions
+		}
+	})
+}
+}>
+<Text style={styles.buttonText}> Save Recipe </Text>
+</Pressable>
+</View>
+</View>
+);
 }
 
 const styles = StyleSheet.create({

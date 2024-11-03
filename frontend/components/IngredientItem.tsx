@@ -1,19 +1,28 @@
 import React, { useState } from "react";
 import { View, Text, StyleSheet, TextInput, Pressable } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
+import axios from 'axios';
 
 type IngredientItemProps = {
-  item: { name: string; amount: string; expires: string };
-  onDelete: () => void;
-  onUpdate: (updatedItem: { name: string; amount: string; expires: string }) => void;
+  item: { name: string; quantity: string; expires: string };
+  onDelete: (name: string) => void;
+  onUpdate: (updatedItem: { name: string; quantity: string; expires: string }) => void;
 };
+
 
 export default function IngredientItem({ item, onDelete, onUpdate }: IngredientItemProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [editedItem, setEditedItem] = useState(item);
-
   const handleSave = () => {
     onUpdate(editedItem);
+    axios({
+      url: "http://10.239.57.74:5000/manual_ingredient",
+      method: "post",
+      data: {
+        "ingredient": editedItem.name,
+        "quantity" : editedItem.quantity
+      }
+    });
     setIsEditing(false);
   };
 
@@ -29,8 +38,8 @@ export default function IngredientItem({ item, onDelete, onUpdate }: IngredientI
             />
             <TextInput
               style={styles.input}
-              value={editedItem.amount}
-              onChangeText={(text) => setEditedItem({ ...editedItem, amount: text })}
+              value={editedItem.quantity}
+              onChangeText={(text) => setEditedItem({ ...editedItem, quantity: text })}
             />
             <TextInput
               style={styles.input}
@@ -51,13 +60,13 @@ export default function IngredientItem({ item, onDelete, onUpdate }: IngredientI
         </Pressable>
       ) : (
         <>
-          <Text style={styles.ingredientAmount}>{item.amount}</Text>
+          <Text style={styles.ingredientAmount}>{item.quantity}</Text>
           <Pressable onPress={() => setIsEditing(true)}>
             <MaterialIcons name="edit" size={24} color="black" />
           </Pressable>
         </>
       )}
-      <Pressable onPress={onDelete}>
+      <Pressable onPress={() => onDelete(editedItem.name)}>
         <MaterialIcons name="delete" size={24} color="black" />
       </Pressable>
     </View>

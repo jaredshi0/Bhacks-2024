@@ -1,4 +1,4 @@
-export function addIngredientToList(name: string, amount: string, expires: string) {
-    return { name, amount, expires };
+export function addIngredientToList(name: string, quantity: string, expires: string) {
+    return { name, quantity, expires };
   }
   
