@@ -7,12 +7,17 @@ from backend.llm.recipeGeneratorMultiple import Recipe
 client = MongoClient("mongodb://localhost:27017/")  # Replace with your MongoDB URI
 db = client["ingredient_database"]  # Database name
 ingredients_collection = db["ingredients"]  # Collection name
-recipies_collection = db["recipies"]  # Collection name
+recipies_collection = db["recipes"]  # Collection name
 
 # Define Ingredient schema
 class Ingredient(BaseModel):
     name: str
     quantity: Optional[str] = None
+
+class Recipe(BaseModel):
+    recipe_name: str
+    ingredients: List[Ingredient]
+    directions: List[str]
 
 # Define functions for MongoDB operations
 
@@ -80,5 +85,8 @@ if __name__ == "__main__":
 
     # generate recipes
     ingredients = {"ingredients": [{"name": "chicken", "quantity": "1 lb"}, {"name": "rice", "quantity": "1 cup"}]}
+
+    recipes = generate_multiple_recipes(ingredients["ingredients"])
+
     
 

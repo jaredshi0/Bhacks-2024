@@ -163,7 +163,7 @@ def generate_recipe():
     for recipe in recipes:
         output.append(recipe_to_dict(recipe))
 
-    print(output)
+    print("generating recipes")
 
     return jsonify(output)
 
@@ -180,16 +180,22 @@ def recipe_to_dict(recipe):
         "directions": recipe.directions
     }
 
-@app.route('/save_reciepe', methods=['POST'])
+@app.route('/save_recipe', methods=['POST'])
 def save_recipe():
     data = request.get_json()
 
     recipe_name = data.get('recipe_name')
-    ingredients = data.get('ingredients')
+    ingredients_name = data.get('ingredients_name')
+    ingredients_quantity = data.get('ingredients_quantity')
     directions = data.get('directions')
 
-    if recipe_name == None or ingredients == None or directions == None:
+    if recipe_name == None or ingredients_name == None or directions == None or len(ingredients_name) != len(ingredients_quantity):
         return missing_info_response
+
+    ingredients = []
+    for i in range(len(ingredients_name)):
+        if ingredients_quantity[i] != None:
+            ingredients.append(Ingredient(name=ingredients_name[i], quantity=ingredients_quantity[i]))
     
     new_recipe = Recipe(recipe_name=recipe_name, ingredients=ingredients, directions=directions)
 
