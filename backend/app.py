@@ -59,16 +59,8 @@ def photo_ingredients():
     # Pass the image to the OCR function
     ocr_String = OCR(image)
 
-    ocr_String += "Chicken 1 lb"
-
-    # print(ocr_String)
-
     # Pass OCR string back to the LLM to process
     ingredients = parse_receipt(ocr_String)
-
-    # print(ingredients)
-    # print(type(ingredients[0]))
-    # print(type(ingredients))
 
     store_ingredients(ingredients)
 
