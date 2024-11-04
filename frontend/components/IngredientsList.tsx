@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet, TextInput, ScrollView, Pressable, Image } from "react-native";
 import IngredientItem from "./IngredientItem";
 import { addIngredientToList } from "../constants/ingrUtil";
+import { Entypo } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import CameraComponent from "./Camera";
 import axios from 'axios';
@@ -30,7 +31,27 @@ export default function IngredientsList() {
     setIngredients((prevIngredients) => [...prevIngredients, newIngredient]);
   };
 
-  const deleteIngredient = (index: number, name:string) => {
+  const handleCapture = async (uri: string) => {
+    
+    setCapturedImage(uri);
+// Create a FormData object and append the image file data 
+
+  const formData = new FormData();
+  formData.append('image', {
+    uri, // URI of the captured image on the local device
+  type: 'image/jpeg', // Set the MIME type of the file 
+  name: 'captured_image.jpg' }); // Send the form data to the Flask server running on a different device 
+
+
+  const response = await axios.post('http://10.239.57.74:5000/photo_ingredients', formData, { 
+  headers: {
+   'Content-Type': 'multipart/form-data'
+   } 
+  });
+  
+  };
+
+  const deleteIngredient = (index: number,name:string) => {
     setIngredients((prevIngredients) => prevIngredients.filter((_, i) => i !== index));
     axios({
       url: "http://10.239.57.74:5000/delete_ingredient",
@@ -55,6 +76,7 @@ export default function IngredientsList() {
       <TextInput
         style={styles.searchBar}
         placeholder="Search for an Ingredient"
+        placeholderTextColor="#8A8A8A" // Set a visible placeholder color
         value={searchQuery}
         onChangeText={setSearchQuery}
       />
@@ -70,9 +92,7 @@ export default function IngredientsList() {
         ))}
       </ScrollView>
 
-      {capturedImage && (
-        <Image source={{ uri: capturedImage }} style={styles.capturedImage} />
-      )}
+      {capturedImage && <Image source={{ uri: capturedImage }} style={styles.capturedImage} />}
 
       <View style={styles.bottomButtons}>
         <LinearGradient
@@ -85,8 +105,7 @@ export default function IngredientsList() {
             <Text style={styles.addButtonText}>Click to add an Ingredient</Text>
           </Pressable>
         </LinearGradient>
-        
-        <CameraComponent onCapture={(uri) => setCapturedImage(uri)} />
+        <CameraComponent onCapture={handleCapture} />
       </View>
     </View>
   );
@@ -104,6 +123,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     backgroundColor: "#e9e9e9",
     color: "#000",
+    fontSize: 16, 
   },
   ingredientsList: {
     flex: 1,

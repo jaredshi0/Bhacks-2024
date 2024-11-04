@@ -1,18 +1,16 @@
-import { Text, View, StyleSheet, ScrollView, Button, Pressable} from "react-native";
+import React, { useState } from "react";
+import { View, Text, StyleSheet, TextInput, ScrollView, Pressable } from "react-native";
 import { useFonts } from 'expo-font';
 import AppLoading from 'expo-app-loading';
-import {Link} from 'expo-router'
+import { Link } from 'expo-router';
 import BottomNavigation from "../components/BottomNav";
 import { useNavigation } from "@react-navigation/native";
-
-
+import { LinearGradient } from 'expo-linear-gradient';
 import {
   SourceSerifPro_400Regular,
 } from '@expo-google-fonts/source-serif-pro'
 import axios from "axios";
-import { useState } from "react";
 
-const userIP = "10.239.57.74"
 export default function RecipeGeneration() {
   const nav = useNavigation();
 
@@ -20,28 +18,28 @@ export default function RecipeGeneration() {
 		SourceSerifPro_400Regular,
     'InstrumentSans': require('../assets/fonts/InstrumentSans.ttf'),
     'InstrumentSans-italics': require('../assets/fonts/InstrumentSans-Italic.ttf'),
+  });
 
-	});
-  
+  const [searchQuery, setSearchQuery] = useState("");
   const[listOfRecipe, setRecipe] = useState([]);
 
-  const testList = [{recipe_name:'bacon egg and cheese', ingredients: "testing ingredients \ningredients 1 \ningredients 2 \ningredients 3", directions: ["dir test 1", "dir test 2"]},
-  {recipe_Name:'isaac  sucks', ingredients:'isaac sucks', directions: ['isaac sucks','issac sucks']},
-  {recipe_Name:'bacon egg and cheese', ingredients: "testing ingredients \ningredients 1 \ningredients 2 \ningredients 3", directions: ["dir test 1", "dir test 2"]},
-  {recipe_Name:'bacon egg and cheese', ingredients: "testing ingredients \ningredients 1 \ningredients 2 \ningredients 3", directions: ["dir test 1", "dir test 2"]}          
-  ];
+  // Filter recipes based on search query
+  const filteredRecipes = listOfRecipe.filter(recipe =>
+    recipe.recipe_name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
-  if(!fontsLoaded)
-  {
-    return <AppLoading/>
-  }else
-    {
-    return (
-      <View style = {style.pageTemp}>
-        <View style = {style.topHeader}>
-          <Text numberOfLines={2} style = {style.titleStyle}> Recipe{"\n"}Generation</Text>
-        </View>
-
+    return( 
+        <View style={style.pageTemp}>
+        {/* Gradient Header */}
+        <LinearGradient asChild
+          colors={["#2E7D32", "#A5D6A7"]}
+          style={style.headerContainer}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+        >
+          <Text style={style.headerText}>Recipe Generation</Text>
+        </LinearGradient>
+  
           <Pressable style={style.buttonStyle} onPress={() => {
             axios(
               {
@@ -49,7 +47,7 @@ export default function RecipeGeneration() {
                 method:"get",
               }).then(function(response){
                 setRecipe(response["data"]),
-                console.log(response["data"][1]["ingredients"])
+                console.log("hi")
               }
             )
           }}>
@@ -59,7 +57,7 @@ export default function RecipeGeneration() {
         <View style = {style.listStyle}>
         {
           
-          listOfRecipe.map((item,i)=>
+          filteredRecipes.map((item,i)=>
           {
             //finish onClick
           return<Pressable style = {style.recipeList} key={i} onPress={()=>nav.navigate('RecipePage',{ 
@@ -84,90 +82,130 @@ export default function RecipeGeneration() {
           }
         </View>
         </ScrollView>
+
         <BottomNavigation />
       </View>
     );
-  }
 }
 
-const style = StyleSheet.create(
+
+const style = StyleSheet.create({
+
+
+  pageTemp: 
   {
-    pageTemp: 
-    {
-      backgroundColor: "#FFFFFF",
-      flex:1
-    },
-    topHeader:
-    {
-      flex:.38,
-      height: 200,
-      backgroundColor: '#5db075',
-      alignItems : 'center',
-      justifyContent: 'center',
-      marginBottom: "10%"
-    },
-    titleStyle:
-    {
-      fontSize: 36,
-      fontWeight: '400',
-      fontFamily: 'SourceSerifPro_400Regular'
+    backgroundColor: "#FFFFFF",
+    flex:1
+  },
+  topHeader:
+  {
+    flex:.38,
+    height: 200,
+    backgroundColor: '#5db075',
+    alignItems : 'center',
+    justifyContent: 'center',
+  },
+  buttonStyle:
+  {
+    flex : 1,
+    width: '80%',
+    height: '5%',
+    backgroundColor: '#3a405a',
+    alignSelf: 'center',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 10,
+    position: 'absolute',
+    top: '17%'
+    
+  },
+  titleStyle:
+  {
+    fontSize: 36,
+    fontWeight: '400',
+    fontFamily: 'SourceSerifPro_400Regular'
+  },
 
-    },
-    buttonStyle:
-    {
-      flex : 1,
-      width: '80%',
-      height: '5%',
-      backgroundColor: '#3a405a',
-      alignSelf: 'center',
-      alignItems: 'center',
-      justifyContent: 'center',
-      borderRadius: 10,
-      position: 'absolute',
-      top: '21%'
-      
-    },
-    buttonText:
-    {
-      flex : 0,
-      color: '#FFFFFF',
-      fontFamily: 'InstrumentSans-italics'
-    },
-    listStyle:
-    {
-      flex: 3,
-      alignItems: 'center'
-    },
-    recipeList:
-    {
-      flex: 0,
-      backgroundColor : '#e9e9e9',
-      width : "80%",
-      marginBottom: 20,
-      paddingLeft:10,
-      borderRadius: 10,
-    },
-    recipeTitle:
-    {
-      fontSize: 20,
-      margin: 3,
-      fontWeight:'600',
-      fontFamily: 'InstrumentSans'
-    },
-    recipeIngredients:
-    {
-      fontSize: 15,
-      margin: 1,
-      fontWeight:'600',
-      fontFamily: 'InstrumentSans'
+  buttonText:
+  {
+    flex : 0,
+    color: '#FFFFFF',
+    fontFamily: 'InstrumentSans-italics'
+  },
 
-    },
-    firstDirection:
-    {
-      fontSize: 15,
-      margin: 3,
-      fontWeight:'600',
-      fontFamily: 'InstrumentSans'
-    }
+  container: {
+    flex: 1,
+    backgroundColor: "#FFFFFF",
+  },
+  headerContainer: {
+    width: "100%",
+    height: 150,
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom:50
+  },
+  headerText: {
+    fontSize: 32,
+    color: "#FFF",
+    fontWeight: "bold",
+  },
+  recipeList: {
+    flex: 1,
+    marginHorizontal: 20,
+  },
+  recipeItem: {
+    backgroundColor: "#f2f2f2",
+    borderRadius: 10,
+    padding: 15,
+    marginBottom: 30,
+  },
+  recipeTitle: {
+    fontSize: 20,
+    fontWeight: "bold",
+    marginBottom: 5,
+  },
+  recipeDescription: {
+    fontSize: 14,
+    marginBottom: 10,
+  },
+  recipePrepTime: {
+    fontSize: 14,
+    fontWeight: "600",
+  },
+  listStyle:
+  {
+    flex: 3,
+    alignItems: 'center'
+  },
+  recipeList:
+  {
+    flex: 0,
+    backgroundColor : '#e9e9e9',
+    width : "80%",
+    marginBottom: 20,
+    paddingLeft:10,
+    borderRadius: 10,
+  },
+  recipeTitle:
+  {
+    fontSize: 20,
+    margin: 3,
+    fontWeight:'600',
+    fontFamily: 'InstrumentSans'
+  },
+  recipeIngredients:
+  {
+    fontSize: 15,
+    margin: 1,
+    fontWeight:'600',
+    fontFamily: 'InstrumentSans'
+
+  },
+  firstDirection:
+  {
+    fontSize: 15,
+    margin: 3,
+    fontWeight:'600',
+    fontFamily: 'InstrumentSans'
   }
-)
+});
